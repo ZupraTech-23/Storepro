@@ -2,8 +2,10 @@
   "dependencies": {
     "dotenv": "^17.2.3",
     "ejs": "^3.1.10",
+    "ejs-mate": "^4.0.0",
     "express": "^5.2.1",
     "method-override": "^3.0.0",
-    "mysql2": "^3.16.0"
+    "mysql2": "^3.16.0",
+    "nodemon": "^3.1.11"
   }
 }

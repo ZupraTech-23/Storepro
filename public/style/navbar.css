@@ -1,0 +1,22 @@
+.sidebar {
+  width: 260px;
+  background: #0f172a;
+  color: #fff;
+  height: 100vh;
+  padding: 25px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+
+
+.sidebar h2{color:#38bdf8;margin-bottom:40px}
+.sidebar li{
+  list-style:none;padding:14px 16px;border-radius:10px;
+  margin-bottom:10px;cursor:pointer;transition:.3s
+}
+.sidebar li:hover,.active{background:#1e293b}
+
+

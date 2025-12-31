@@ -4,6 +4,7 @@ const port=8080;
 const mysql = require("mysql2");
 const path = require("path");
 const methodOverride = require("method-override");
+
 app.use(methodOverride("_method"));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -11,6 +12,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 require("dotenv").config();
+const ejsMate=require('ejs-mate')
+app.engine('ejs',ejsMate)
 
 const connection = mysql.createConnection({
   host: process.env.DB_HOST,
@@ -22,11 +25,20 @@ const connection = mysql.createConnection({
     rejectUnauthorized: true
   }
 });
-connection.query("SELECT 1", (err, result) => {
-  if (err) {
-    console.error("Connection failed ❌", err);
-  } else {
-    console.log("TiDB Connected Successfully ✅");
-  }
-  process.exit();
+
+
+app.listen(port ,(req,res)=>{
+ console.log("working")
 });
+
+app.get("/dashboard", (req,res)=>{
+  res.render("dashboard")
+});
+
+app.get("/",(req,res)=>{
+  res.send("working")
+})
+app.get("/billing",(req,res)=>{
+  res.render("billing")
+});
+
