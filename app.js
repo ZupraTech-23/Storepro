@@ -51,7 +51,7 @@ app.get("/billing",(req,res)=>{
 app.get("/inventory", (req , res)=>{
  let q="select * from inventory";
  connection.query(q,(err,items)=>{
-  console.log(items);
+  
   res.render('inventory.ejs',{items});
  })
 });
@@ -64,8 +64,11 @@ app.post("/add-inventory",(req,res)=>{
   console.log(req.body);
   let q="INSERT INTO inventory (name, category, brand, purchase_price, selling_price, stock, notes) VALUES (?,?,?,?,?,?,?)";
   connection.query(q,[name,category,brand,purchase_price,selling_price,stock,notes],(err,result)=>{
-    console.log(result);
-    res.send('added');
+    if(err){
+      console.error(err);
+    }
+    
+    res.redirect("/inventory")
   })
 })
 
