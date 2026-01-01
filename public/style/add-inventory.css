@@ -1,0 +1,63 @@
+/* FORM BOX */
+.inventory-box {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.05);
+  max-width: 80%;
+  margin: auto;
+  padding: 30px;
+  text-align: center;
+}
+
+/* FORM */
+.inventory-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-row label {
+  font-size: 1.5rem;
+  color: #475569;
+  font-weight: 600;
+  text-transform: uppercase;
+
+}
+
+.form-row input,
+.form-row textarea {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 1rem;
+  outline: none;
+  height: 30px;
+  text-align: center;
+  
+}
+
+.form-row input:focus,
+.form-row textarea:focus {
+  border-color: #2563eb;
+}
+
+/* ACTIONS */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.btn.secondary {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.btn.secondary:hover {
+  background: #e2e8f0;
+}

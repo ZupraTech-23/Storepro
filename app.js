@@ -23,6 +23,9 @@ const connection = mysql.createConnection({
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
   ssl: {
     rejectUnauthorized: true
     
@@ -45,6 +48,26 @@ app.get("/",(req,res)=>{
 app.get("/billing",(req,res)=>{
   res.render("billing")
 });
+app.get("/inventory", (req , res)=>{
+ let q="select * from inventory";
+ connection.query(q,(err,items)=>{
+  console.log(items);
+  res.render('inventory.ejs',{items});
+ })
+});
+app.get("/add-inventory",(req,res)=>{
+  res.render("add-inventory.ejs");
+})
+
+app.post("/add-inventory",(req,res)=>{
+  let{name,category,brand,purchase_price,selling_price,stock,notes}=req.body;
+  console.log(req.body);
+  let q="INSERT INTO inventory (name, category, brand, purchase_price, selling_price, stock, notes) VALUES (?,?,?,?,?,?,?)";
+  connection.query(q,[name,category,brand,purchase_price,selling_price,stock,notes],(err,result)=>{
+    console.log(result);
+    res.send('added');
+  })
+})
 
 
 

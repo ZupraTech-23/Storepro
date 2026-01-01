@@ -1,0 +1,61 @@
+<% layout('/layouts/boilerplate') %>
+
+<body>
+    <div class="inventory-dashboard">
+
+  <!-- HEADER -->
+  <div class="inventory-header">
+    <h2>Add Inventory Item</h2>
+  </div>
+
+  <!-- FORM BOX -->
+  <div class="inventory-box">
+    <form action="/add-inventory" method="POST" class="inventory-form">
+
+      <div class="form-row">
+        <label>Item Name</label>
+        <input type="text" name="name" required />
+      </div>
+
+      <div class="form-row">
+        <label>Category</label>
+        <input type="text" name="category" required />
+      </div>
+
+      <div class="form-row">
+        <label>Brand</label>
+        <input type="text" name="brand" />
+      </div>
+
+      <div class="form-row">
+        <label>Purchase Price</label>
+        <input type="number" name="purchase_price" min="0" required />
+      </div>
+
+      <div class="form-row">
+        <label>Selling Price</label>
+        <input type="number" name="selling_price" min="0" required />
+      </div>
+
+      <div class="form-row">
+        <label>Stock</label>
+        <input type="number" name="stock" min="0" value="0" />
+      </div>
+
+      <div class="form-row">
+        <label>Notes</label>
+        <textarea name="notes" rows="3"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn">Add Item</button>
+        <a href="/add-inventory" class="btn secondary">Cancel</a>
+      </div>
+
+    </form>
+  </div>
+
+</div>
+
+</body>
+
