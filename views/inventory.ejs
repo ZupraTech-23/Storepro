@@ -1,0 +1,211 @@
+<% layout('/layouts/boilerplate') %>
+<style>
+    /* =====================
+   MODERN DASHBOARD CSS
+   ===================== */
+
+:root {
+  --bg: #f6f8fc;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: #e5e7eb;
+  --primary: #6366f1;
+  --danger: #ef4444;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+body {
+  background: var(--bg);
+  padding: 24px;
+  color: var(--text);
+}
+
+/* CONTAINER */
+.inventory-dashboard {
+  max-width: 1280px;
+  margin: auto;
+  background: var(--card);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+}
+
+/* HEADER */
+.inventory-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.inventory-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.inventory-header span {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* TABLE WRAPPER */
+.inventory-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+}
+
+/* TABLE HEAD */
+.inventory-table thead th {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  padding: 12px;
+  text-align: left;
+}
+
+/* TABLE BODY */
+.inventory-table tbody tr {
+  background: var(--card);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.inventory-table tbody tr:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.inventory-table td {
+  padding: 14px 12px;
+  font-size: 14px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.inventory-table td:first-child {
+  border-left: 1px solid var(--border);
+  border-radius: 12px 0 0 12px;
+  font-weight: 500;
+}
+
+.inventory-table td:last-child {
+  border-right: 1px solid var(--border);
+  border-radius: 0 12px 12px 0;
+  color: var(--muted);
+}
+
+/* PRICE */
+.inventory-table td:nth-child(4),
+.inventory-table td:nth-child(5) {
+  font-weight: 500;
+}
+
+/* LOW STOCK */
+.low-stock {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+/* EMPTY */
+.empty {
+  text-align: center;
+  padding: 24px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .inventory-header h2 {
+    font-size: 20px;
+  }
+
+  .inventory-table thead {
+    display: none;
+  }
+
+  .inventory-table,
+  .inventory-table tbody,
+  .inventory-table tr,
+  .inventory-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .inventory-table tbody tr {
+    padding: 12px;
+  }
+
+  .inventory-table td {
+    border: none;
+    padding: 8px 0;
+  }
+
+  .inventory-table td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+}
+
+</style>
+<body>
+    
+    <div class="inventory-dashboard">
+
+  <div class="inventory-header">
+    <h2>Inventory</h2>
+    <span>Total Items: <%= items.length %></span>
+  </div>
+
+  <table class="inventory-table">
+    <thead>
+      <tr>
+        <th>Item Name</th>
+        <th>Category</th>
+        <th>Brand</th>
+        <th>Purchase Price</th>
+        <th>Selling Price</th>
+        <th>Stock</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (items && items.length > 0) { %>
+        <% items.forEach(item => { %>
+          <tr>
+            <td><%= item.item_name %></td>
+            <td><%= item.category %></td>
+            <td><%= item.brand %></td>
+            <td>₹<%= item.purchase_price %></td>
+            <td>₹<%= item.selling_price %></td>
+            <td class="<%= item.stock <= 5 ? 'low-stock' : '' %>">
+              <%= item.stock %>
+            </td>
+            <td><%= item.notes %></td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr>
+          <td colspan="7" class="empty">No inventory found</td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+
+</div>
+
+</body>
