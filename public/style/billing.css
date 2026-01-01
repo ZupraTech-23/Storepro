@@ -1,0 +1,84 @@
+/* MAIN BILLING WRAPPER */
+.billing {
+  margin-left: 260px;          /* SAME as sidebar */
+  
+  min-height: 100vh;
+}
+
+/* HEADER */
+.billing-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.billing-header h1 {
+  color: #0f172a;
+}
+
+/* BUTTON */
+.btn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn:hover {
+  background: #1d4ed8;
+}
+
+/* BOX */
+.billing-box {
+  background: #fff;
+  padding: 25px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.05);
+  margin-top: 50px;
+}
+
+/* TABLE */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 12px 10px;
+  font-size: 0.9rem;
+}
+
+th {
+  text-align: left;
+  color: #64748b;
+}
+
+tr:not(:last-child) {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* BADGES */
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+}
+
+.paid {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.pending {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.overdue {
+  background: #ffedd5;
+  color: #9a3412;
+}

@@ -1,0 +1,194 @@
+/* ===== PAGE WRAPPER ===== */
+.inventory-dashboard {
+  min-height: 100vh;
+  /* padding: 40px 20px 80px; */
+  /* background: linear-gradient(180deg, #f8fafc, #eef2ff); */
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  
+}
+
+/* ===== HEADER ===== */
+.inventory-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.inventory-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.inventory-header p {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: #64748b;
+}
+
+/* ===== FORM CARD ===== */
+.inventory-box {
+  max-width: 920px;
+  margin: auto;
+  
+  padding: 36px;
+  border-radius: 24px;
+  box-shadow: 0 25px 55px rgba(15, 23, 42, 0.08);
+}
+
+/* ===== FORM ===== */
+.inventory-form {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ===== SECTIONS ===== */
+.form-section {
+  background: #f8fafc;
+  border-radius: 18px;
+  padding: 24px;
+  border: 1px solid #e5e7eb;
+}
+
+.section-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #1e293b;
+  margin-bottom: 18px;
+  text-transform: uppercase;
+}
+
+/* ===== FORM ROW ===== */
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.form-row label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+}
+.form-row input{
+  font-size: large;
+}
+
+/* ===== INPUTS ===== */
+.form-control,
+textarea {
+  height: 44px;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  outline: none;
+  background: #ffffff;
+  transition: all 0.25s ease;
+}
+
+textarea {
+  height: auto;
+  resize: none;
+}
+
+.form-control::placeholder,
+textarea::placeholder {
+  color: #94a3b8;
+}
+
+/* ===== FOCUS ===== */
+.form-control:focus,
+textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* ===== PRICE GRID ===== */
+.price-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* ===== SMALL INPUT ===== */
+.small-row .form-control {
+  max-width: 220px;
+}
+
+/* ===== INVALID (BOOTSTRAP STYLE) ===== */
+.was-validated .form-control:invalid {
+  border-color: #dc2626;
+}
+
+.was-validated .form-control:invalid:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+.invalid-feedback {
+  font-size: 0.75rem;
+  color: #dc2626;
+}
+
+/* ===== ACTIONS ===== */
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  padding: 12px 28px;
+  border-radius: 14px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+/* PRIMARY */
+.btn.primary {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.35);
+}
+
+.btn.primary:hover {
+  transform: translateY(-2px);
+}
+
+/* SECONDARY */
+.btn.secondary {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.btn.secondary:hover {
+  background: #e2e8f0;
+}
+
+/* ===== REMOVE NUMBER SPINNERS ===== */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+
+/* ===== MOBILE ===== */
+@media (max-width: 640px) {
+  .price-row {
+    grid-template-columns: 1fr;
+  }
+
+  .inventory-box {
+    padding: 24px;
+  }
+}

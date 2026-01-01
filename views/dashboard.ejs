@@ -1,0 +1,94 @@
+<% layout('/layouts/boilerplate') -%>
+
+
+
+<body>
+
+
+
+
+<div class="dashboard">
+
+  <div class="header">
+    <h1>Dashboard</h1>
+    <span>Business Overview</span>
+  </div>
+
+  <!-- KPIs (CLICKABLE) -->
+  <div class="kpis">
+    <div class="kpi" onclick="go('sales')">
+      <p>📈 Today Sales</p><h2>₹24,500</h2>
+    </div>
+    <div class="kpi" onclick="go('reports')">
+      <p>📊 Monthly Revenue</p><h2>₹6,80,000</h2>
+    </div>
+    <div class="kpi" onclick="go('inventory')">
+      <p>📦 Total Products</p><h2>1,342</h2>
+    </div>
+    <div class="kpi" onclick="go('inventory')">
+      <p>⚠ Low Stock Items</p><h2>18</h2>
+    </div>
+    <div class="kpi" onclick="go('billing')">
+      <p>🧾 Active Invoices</p><h2>42</h2>
+    </div>
+    <div class="kpi" onclick="go('payments')">
+      <p>💰 Pending Payments</p><h2>₹1,42,800</h2>
+    </div>
+  </div>
+
+  <!-- GRID -->
+  <div class="grid">
+
+    <!-- LEFT -->
+    <div>
+      <div class="box" style="margin-bottom:25px">
+        <h3>Invoice Status Overview</h3>
+        <div class="chart">
+          📊 Paid vs Pending vs Overdue (Chart Placeholder)
+        </div>
+      </div>
+
+      <div class="box">
+        <h3>Recent Invoices</h3>
+        <table>
+          <tr>
+            <th>Invoice</th><th>Customer</th><th>Amount</th><th>Status</th>
+          </tr>
+          <tr>
+            <td>#INV-1024</td><td>Rahul Traders</td>
+            <td>₹12,500</td><td><span class="badge paid">Paid</span></td>
+          </tr>
+          <tr>
+            <td>#INV-1025</td><td>Khan Stores</td>
+            <td>₹8,200</td><td><span class="badge overdue">Overdue</span></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div>
+      <div class="box" style="margin-bottom:25px">
+        <h3>🚨 Overdue Invoices</h3>
+        <div class="alert">#INV-1025 – ₹8,200 (5 days overdue)</div>
+        <div class="alert">#INV-1018 – ₹15,400 (9 days overdue)</div>
+      </div>
+
+      <div class="box">
+        <h3>Alerts</h3>
+        <div class="alert">⚠ Printer Paper – 8 units left</div>
+        <div class="alert">⚠ 12 invoices pending payment</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+function go(page){
+  alert("Navigate to: " + page);
+}
+</script>
+
+</body>
