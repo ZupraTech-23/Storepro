@@ -7,6 +7,7 @@ const mysql = require("mysql2");
 const path = require("path");
 const methodOverride = require("method-override");
 const fs = require("fs");
+const ExpressError=require('./utils/error.js');
 
 app.use(methodOverride("_method"));
 app.set("view engine", "ejs");
@@ -48,9 +49,12 @@ app.get("/",(req,res)=>{
 app.get("/billing",(req,res)=>{
   res.render("billing")
 });
-app.get("/inventory", (req , res)=>{
+app.get("/inventory", (req , res,next)=>{
  let q="select * from inventory";
  connection.query(q,(err,items)=>{
+  if(err){
+    return next(err);
+  }
   
   res.render('inventory.ejs',{items});
  })
@@ -59,17 +63,23 @@ app.get("/add-inventory",(req,res)=>{
   res.render("add-inventory.ejs");
 })
 
-app.post("/add-inventory",(req,res)=>{
+app.post("/add-inventory",(req,res,next)=>{
   let{name,category,brand,purchase_price,selling_price,stock,notes}=req.body;
   console.log(req.body);
   let q="INSERT INTO inventory (name, category, brand, purchase_price, selling_price, stock, notes) VALUES (?,?,?,?,?,?,?)";
   connection.query(q,[name,category,brand,purchase_price,selling_price,stock,notes],(err,result)=>{
     if(err){
-      console.error(err);
+      return next(new ExpressError(sqlMessage,500));
     }
     
     res.redirect("/inventory")
   })
+})
+
+app.use((err,req,res,next)=>{
+  const status=err.status||500;
+  const message=err.message||err.sqlMessage||"something went wrong";
+  res.status(status).send(message);
 })
 
 
