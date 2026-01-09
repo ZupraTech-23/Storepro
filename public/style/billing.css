@@ -18,8 +18,8 @@
 }
 
 /* BUTTON */
-.btn {
-  background: #2563eb;
+.create {
+  background-color: #1d4ed8;
   color: #fff;
   border: none;
   padding: 10px 16px;
@@ -68,17 +68,17 @@ tr:not(:last-child) {
   font-size: 0.75rem;
 }
 
-.paid {
+.badge.paid {
   background: #dcfce7;
   color: #166534;
 }
 
-.pending {
+.badge.pending {
   background: #fee2e2;
   color: #991b1b;
 }
 
-.overdue {
+.badge.overdue {
   background: #ffedd5;
   color: #9a3412;
 }

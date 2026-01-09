@@ -1,10 +1,15 @@
 <% layout('/layouts/boilerplate') %>
+  <link rel="stylesheet" href="/style/billing.css">
+
 
 <div class="billing">
 
   <div class="billing-header">
     <h1>Billing</h1>
-    <button class="btn">+ Create Invoice</button>
+    <a href="http://localhost:8080/bills/new">
+    <button class="create">+ Create Invoice</button>
+
+    </a>
   </div>
 
   <div class="billing-box">

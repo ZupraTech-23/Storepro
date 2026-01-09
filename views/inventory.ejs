@@ -1,4 +1,6 @@
 <% layout('/layouts/boilerplate') %>
+  <link rel="stylesheet" href="/style/inventory.css">
+
 
    
 
@@ -9,7 +11,15 @@
 
   <div class="inventory-header">
     <h2>Inventory</h2>
+
+    <a href="http://localhost:8080/add-inventory">
+      <button class="add-inventory">Add Inventory</button>
+    </a>
+  </div>
+
+  <div style="text-align: center; margin-bottom: 10px; font-size: 16px; font-weight: 600; text-transform: uppercase;">
     <span>Total Items: <%= items.length %></span>
+
   </div>
 
   <table class="inventory-table">
@@ -21,7 +31,8 @@
         <th>Purchase Price</th>
         <th>Selling Price</th>
         <th>Stock</th>
-        <th>Notes</th>
+        <th>Condition</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -36,7 +47,17 @@
             <td>
               <%= item.stock %>
             </td>
-            <td><%= item.notes %></td>
+            <td>
+              <%= item.item_condition %>
+            </td>
+            
+            <td> <a href="http://localhost:8080/edit-inventory/<%=item.id%>" style="color: black;"><i class="fa-regular fa-pen-to-square"></i></a>
+            <form action="/delete-inventory/<%= item.id %>?_method=DELETE" method="POST" style="display:inline;">
+  <button type="submit" style="border:none; background:none; color:black; cursor:pointer;">
+    <i class="fa-solid fa-x"></i>
+  </button>
+</form>
+</td>
           </tr>
         <% }) %>
       <% } else { %>
