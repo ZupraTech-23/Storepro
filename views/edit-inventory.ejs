@@ -1,20 +1,16 @@
-<% layout('/layouts/boilerplate') %>
-
-  <link rel="stylesheet" href="/style/add-inventory.css">
-
-
+<% layout("layouts/boilerplate") -%>
 <div class="inventory-dashboard">
 
   <!-- HEADER -->
   <div class="inventory-header">
-    <h2>Add Inventory Item</h2>
-    <p>Manage your stock with accurate pricing & details</p>
+    <h2>EditInventory Item</h2>
+    
   </div>
 
   <!-- FORM BOX -->
   <div class="inventory-box">
 
-    <form action="/add-inventory" method="POST" class="inventory-form needs-validation" novalidate>
+    <form action="/edit-inventory/<%= item.id %>?_method=PATCH" method="POST" class="inventory-form needs-validation" novalidate>
 
       <!-- BASIC INFO -->
       <div class="form-section">
@@ -22,22 +18,19 @@
 
         <div class="form-row">
           <label>Item Name</label>
-          <input type="text" name="name" data-type="item" placeholder="e.g. Samsung Galaxy S23" class="form-control auto-input"  autocomplete="off" required />
-          <ul class="list-group suggestion-box d-none"></ul>
+          <input type="text" name="name" placeholder="e.g. Samsung Galaxy S23" class="form-control" value="<%= item.name%>" />
           <div class="invalid-feedback">Item name is required</div>
         </div>
 
         <div class="form-row">
           <label>Category</label>
-          <input type="text" name="category" data-type="category" placeholder="e.g. Smartphones" class="form-control auto-input" autocomplete="off" required />
-          <ul class="list-group suggestion-box d-none"></ul>
+          <input type="text" name="category" placeholder="e.g. Smartphones" class="form-control"  value="<%= item.category %>" />
           <div class="invalid-feedback">Category is required</div>
         </div>
 
         <div class="form-row">
           <label>Brand</label>
-          <input type="text" name="brand" data-type="brand" placeholder="e.g. Samsung" class="form-control auto-input" required autocomplete="off"/>
-          <ul class="list-group suggestion-box d-none"></ul>
+          <input type="text" name="brand" placeholder="e.g. Samsung" class="form-control" value="<%= item.brand %>" required />
           <div class="invalid-feedback">Brand name is required</div>
         </div>
       </div>
@@ -49,20 +42,18 @@
         <div class="price-row">
           <div>
             <label>Purchase Price</label>
-            <input type="number" name="purchase_price" min="0" placeholder="₹ 0.00" class="form-control no-arrow"  required />
+            <input type="number" name="purchase_price" min="0" placeholder="₹ 0.00" class="form-control" value="<%= item.purchase_price %>" required />
             <div class="invalid-feedback">Purchase Price is required</div>
           </div>
 
           <div>
             <label>Selling Price</label>
-            <input type="number" name="selling_price" min="0" placeholder="₹ 0.00" class="form-control no-arrow" required />
+            <input type="number" name="selling_price" min="0" placeholder="₹ 0.00" class="form-control" value="<%= item.selling_price %>" required />
             <div class="invalid-feedback">Selling Price is required</div>
           </div>
           <div>
             <label for="item_condition">Condition (not required for accessories)</label>
-            <input type="text" name="item_condition" data-type="condition" placeholder="e.g new or preowned" class="form-control auto-input" autocomplete="off">
-            <ul class="list-group suggestion-box d-none"></ul>
-            
+            <input type="text" name="item_condition" placeholder="e.g new or preowned" class="form-control" value="<%= item.item_condition %>">
             
           </div>
         </div>
@@ -74,14 +65,19 @@
 
         <div class="form-row small-row">
           <label>Opening Stock</label>
-          <input type="number" name="stock" min="0" class="form-control no-arrow"  required />
+          <input type="number" name="stock" min="0" class="form-control" value="<%= item.stock%>" required />
           <div class="invalid-feedback">Stock is required</div>
         </div>
 
+        <div class="form-row">
+          <label>Notes (optional)</label>
+          <textarea name="notes" rows="3" placeholder="Supplier, warranty, batch no, remarks..."> <%= item.notes %></textarea>
+        </div>
+      </div>
 
       <!-- ACTIONS -->
       <div class="form-actions">
-        <button type="submit" class="btn primary">Add Item</button>
+        <button type="submit" class="btn primary">Edit</button>
         <a href="/inventory" class="btn secondary">Cancel</a>
       </div>
 
@@ -90,6 +86,4 @@
   </div>
 </div>
 
-
 <script src="/js/script.js"></script>
-<script src="/js/suggestion.js"></script>

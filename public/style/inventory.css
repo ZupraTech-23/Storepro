@@ -17,7 +17,15 @@
   font-weight: 600;
   color: #111827;
 }
-
+.add-inventory{
+  background-color: #1d4ed8;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
 .inventory-header span {
   font-size: 0.9rem;
   color: #6b7280;

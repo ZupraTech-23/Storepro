@@ -1,0 +1,145 @@
+<% layout('/layouts/boilerplate') -%>
+  <link rel="stylesheet" href="/style/bill-new.css">
+
+
+<body class="billing">
+
+<h2>Create Bill</h2>
+
+<form method="POST" action="/bills/create" class="bill-form">
+
+    <!-- Bill Type -->
+    <label>Bill Type</label>
+    <select name="bill_type" required>
+        <option value="TAX_INVOICE">Tax Invoice</option>
+        <option value="BILL_OF_SUPPLY">Bill of Supply</option>
+        <option value="MEMORANDUM">Memorandum</option>
+    </select>
+
+    <!-- Item Type -->
+    <label>Item Type</label>
+    <select name="item_type" required>
+        <option value="NEW">New</option>
+        <option value="PRE_OWNED">Pre-Owned</option>
+    </select>
+
+    <hr>
+
+    <!-- Customer Details -->
+    <h3>Customer Details</h3>
+    <input type="text" name="customer_name" placeholder="Customer Name" required>
+    <input type="text" name="customer_phone" placeholder="Phone">
+
+    <input type="text" 
+        name="customer_address" 
+        placeholder="Customer Address"
+        
+        
+    
+    >
+
+    <input type="text" name="customer_gstin" placeholder="GSTIN (optional)">
+
+    <hr>
+
+    <!-- Items -->
+    <h3>Items</h3>
+
+    <table id="itemsTable">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>GST %</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td>
+                    <select name="items[0][product_id]" required>
+                        <option value="">Select Product</option>
+                        <% items.forEach(item => { %>
+                            <option 
+                                value="<%= item.id %>"
+                                data-price="<%= item.selling_price %>"
+                                data-stock="<%= item.stock %>">
+                                <%= item.name %> (Stock: <%= item.stock %>)
+                            </option>
+                        <% }) %>
+                    </select>
+                </td>
+
+                <td>
+                    <input type="number" name="items[0][quantity]" min="1" value="1">
+                </td>
+
+                <td>
+                    <input type="number" name="items[0][price]" step="0.01">
+                </td>
+
+                <td>
+                    <input type="number" name="items[0][gst_percent]" value="18">
+                </td>
+
+                <td>
+                    <input type="text" name="items[0][total]" readonly>
+                </td>
+
+                <td>
+                    <button type="button" onclick="removeRow(this)">❌</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button type="button" class="add-btn" onclick="addRow()">+ Add Item</button>
+
+    <hr>
+
+    <!-- Tax Summary (INSIDE FORM – IMPORTANT) -->
+    <h3>Tax Summary</h3>
+    <div class="tax-summary">
+        <input type="text" id="subtotal" name="subtotal" placeholder="Subtotal" readonly>
+        <input type="text" id="cgst" name="cgst" placeholder="CGST" readonly>
+        <input type="text" id="sgst" name="sgst" placeholder="SGST" readonly>
+        <input type="text" id="grandTotal" name="grand_total" placeholder="Grand Total" readonly>
+    </div>
+
+    <hr>
+
+    <button type="submit">Save Bill</button>
+
+</form>
+
+<script>
+let rowIndex = 1;
+
+function addRow() {
+    const tbody = document.querySelector("#itemsTable tbody");
+    const firstRow = tbody.rows[0];
+    const newRow = firstRow.cloneNode(true);
+
+    newRow.querySelectorAll("input, select").forEach(el => {
+        el.name = el.name.replace(/\[\d+\]/, `[${rowIndex}]`);
+        if (el.tagName === "INPUT") el.value = "";
+    });
+
+    tbody.appendChild(newRow);
+    rowIndex++;
+}
+
+function removeRow(btn) {
+    const tbody = document.querySelector("#itemsTable tbody");
+    if (tbody.rows.length > 1) {
+        btn.closest("tr").remove();
+    }
+}
+</script>
+
+<script src="/js/bills-new.js"></script>
+
+</body>
