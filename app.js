@@ -5,10 +5,16 @@ const app=express();
 const port=8080;
 const mysql = require("mysql2/promise");
 const path = require("path");
+const { generateInvoiceNo } = require("./utils/invoiceNo.js");
+
 const methodOverride = require('method-override')
+const { calculateItemGST } = require('./utils/gst.js');
+
 const fs = require("fs");
 const WrapAsync=require('./utils/wrapasync.js')
 const ExpressError=require('./utils/error.js');
+const {getHSNByItem} = require("./utils/hsn.js");
+
 app.use(methodOverride("_method"));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -135,7 +141,7 @@ app.get("/search/:type", WrapAsync(async (req, res) => {
 
 
 
-app.post("/add-inventory", WrapAsync(async (req, res,) => {
+app.post("/add-inventory", WrapAsync(async (req, res) => {
 
   let {
     name,
@@ -158,40 +164,49 @@ app.post("/add-inventory", WrapAsync(async (req, res,) => {
     );
   }
 
-  
-
-  
-
   // Smart condition logic
-  if (category && category.toLowerCase() === "accessories")  {
+  if (category?.toLowerCase() === "accessories") {
     item_condition = "New";
-  } else {
-    if (!item_condition) {
-      throw new ExpressError("Item condition is required", 400);
-    }
+  } else if (!item_condition) {
+    throw new ExpressError("Item condition is required", 400);
+  }
+
+  // ✅ UTIL usage
+  const hsn = getHSNByItem({
+  category,
+  name
+});
+
+  if (!hsn) {
+    throw new ExpressError(
+      "HSN not configured for this category",
+      400
+    );
   }
 
   const q = `
     INSERT INTO inventory
-    (name, category, brand, purchase_price, selling_price, stock, item_condition)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    (name, category, brand, hsn, purchase_price, selling_price, stock, item_condition)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `;
-try{
-  await connection.query(q, [
-    name,
-    category,
-    brand,
-    purchase_price,
-    selling_price,
-    stock,
-    item_condition
-  ])}
-  catch(err){
-    if(err.code==="ER_DUP_ENTRY"){
-      throw new ExpressError("Item already exist ",400)
+
+  try {
+    await connection.query(q, [
+      name,
+      category,
+      brand,
+      hsn,
+      purchase_price,
+      selling_price,
+      stock,
+      item_condition
+    ]);
+  } catch (err) {
+    if (err.code === "ER_DUP_ENTRY") {
+      throw new ExpressError("Item already exists", 400);
     }
-    
-  };
+    throw err;
+  }
 
   res.redirect("/inventory");
 }));
@@ -246,7 +261,7 @@ app.delete('/delete-inventory/:id',WrapAsync(async(req,res)=>{
 // bills
 app.get("/bills/new",WrapAsync(async(req,res,next)=>{
    const [items] = await connection.query(
-        "SELECT id, name, stock, selling_price FROM inventory WHERE stock > 0"
+        "SELECT id, name, stock, selling_price,purchase_price,item_condition FROM inventory WHERE stock > 0"
     );
 
     res.render("bills/new", {
@@ -255,6 +270,8 @@ app.get("/bills/new",WrapAsync(async(req,res,next)=>{
   
 }))
 
+
+
 app.post("/bills/create", WrapAsync(async (req, res) => {
 
     const conn = await connection.getConnection();
@@ -262,7 +279,7 @@ app.post("/bills/create", WrapAsync(async (req, res) => {
     try {
         await conn.beginTransaction();
 
-        // 1️⃣ Get data from form
+        // 1️⃣ Bill-level data
         const {
             bill_type,
             item_type,
@@ -270,80 +287,106 @@ app.post("/bills/create", WrapAsync(async (req, res) => {
             customer_address,
             customer_phone,
             customer_gstin,
-            subtotal,
-            cgst,
-            sgst,
-            grand_total,
             items
         } = req.body;
 
         // 2️⃣ Generate invoice number
-        const [[lastBill]] = await conn.query(
-            "SELECT id FROM bills ORDER BY id DESC LIMIT 1"
-        );
+        const invoiceNo = await generateInvoiceNo(conn, bill_type);
 
-        const nextId = lastBill ? lastBill.id + 1 : 1;
-        const invoiceNo = `INV-${new Date().getFullYear()}-${String(nextId).padStart(4, "0")}`;
+        let backendSubtotal = 0;
+        let backendGST = 0;
 
-        // 3️⃣ Insert into bills table
+        // 🔹 TEMP store calculated item data
+        const processedItems = [];
+
+        // 3️⃣ FIRST PASS: validate + calculate only
+        for (let item of items) {
+
+            const [[product]] = await conn.query(
+                `SELECT name, hsn, stock, item_condition, purchase_price
+                 FROM inventory WHERE id = ?`,
+                [item.product_id]
+            );
+
+            if (!product) throw new Error("Invalid product selected");
+            if (!product.hsn) throw new Error(`HSN missing for ${product.name}`);
+
+            if (bill_type !== "MEMORANDUM" && product.stock < item.quantity) {
+                throw new Error(`Insufficient stock for ${product.name}`);
+            }
+
+            // Safety: New items cannot use margin
+            if (product.item_condition === "NEW") {
+                item.gst_method = "normal";
+            }
+
+            const baseTotal = Number(item.quantity) * Number(item.price);
+            backendSubtotal += baseTotal;
+
+            const itemGST = calculateItemGST(item, product);
+            backendGST += itemGST;
+
+            processedItems.push({
+                product_id: item.product_id,
+                product_name: product.name,
+                hsn: product.hsn,
+                quantity: item.quantity,
+                price: item.price,
+                gst_percent: item.gst_percent || 18,
+                gst_method: item.gst_method || "normal",
+                total: baseTotal + itemGST
+            });
+        }
+
+        // 4️⃣ Insert BILL (now totals are final)
+        const cgstAmount = backendGST / 2;
+        const sgstAmount = backendGST / 2;
+        const grandTotalCalc = backendSubtotal + backendGST;
+
         const [billResult] = await conn.query(
             `INSERT INTO bills
-            (invoice_no, bill_type, item_type,
+            (invoice_no, bill_type, 
              customer_name, customer_address,
              customer_phone, customer_gstin,
-             subtotal, cgst, sgst, grand_total)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+             subtotal, cgst, sgst, gst_percent, grand_total)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ?)`,
             [
                 invoiceNo,
                 bill_type,
-                item_type,
+                
                 customer_name,
                 customer_address,
                 customer_phone,
                 customer_gstin,
-                subtotal,
-                cgst,
-                sgst,
-                grand_total
+                backendSubtotal,
+                cgstAmount,
+                sgstAmount,
+                18,
+                grandTotalCalc
             ]
         );
 
         const billId = billResult.insertId;
 
-        // 4️⃣ Insert bill items + update stock
-        for (let item of items) {
+        // 5️⃣ SECOND PASS: insert bill_items + update stock
+        for (let item of processedItems) {
 
-            // 🔹 Fetch product name from inventory (column is `name`)
-            const [[product]] = await conn.query(
-                "SELECT name, stock FROM inventory WHERE id = ?",
-                [item.product_id]
-            );
-
-            if (!product) {
-                throw new Error("Invalid product selected");
-            }
-
-            // 🔹 Stock safety check
-            if (bill_type !== "MEMORANDUM" && product.stock < item.quantity) {
-                throw new Error(`Insufficient stock for ${product.name}`);
-            }
-
-            // 🔹 Insert bill item
             await conn.query(
                 `INSERT INTO bill_items
-                (bill_id, product_name, quantity, price, gst_percent, total)
-                VALUES (?, ?, ?, ?, ?, ?)`,
+                (bill_id, product_name, hsn, quantity, price, gst_percent, gst_method, total)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
                     billId,
-                    product.name,          // ✅ CORRECT
+                    item.product_name,
+                    item.hsn,
                     item.quantity,
                     item.price,
                     item.gst_percent,
+                    item.gst_method,
                     item.total
                 ]
             );
 
-            // 🔹 Reduce stock (skip for memorandum)
             if (bill_type !== "MEMORANDUM") {
                 await conn.query(
                     "UPDATE inventory SET stock = stock - ? WHERE id = ?",
@@ -352,10 +395,9 @@ app.post("/bills/create", WrapAsync(async (req, res) => {
             }
         }
 
-        // 5️⃣ Commit transaction
+        // 6️⃣ Commit
         await conn.commit();
 
-        // 6️⃣ Redirect to bill view
         res.redirect(`/bills/${billId}`);
 
     } catch (err) {
@@ -366,6 +408,8 @@ app.post("/bills/create", WrapAsync(async (req, res) => {
         conn.release();
     }
 }));
+
+
 
 app.get("/bills/:id", WrapAsync(async (req, res) => {
 
@@ -387,16 +431,27 @@ app.get("/bills/:id", WrapAsync(async (req, res) => {
         [id]
     );
 
-    // 3️⃣ Get seller details (ONLY ONE ROW)
+    // 3️⃣ Get seller details
     const [[seller]] = await connection.query(
         "SELECT * FROM seller LIMIT 1"
     );
 
-    res.render("bills/show", {
-        bill,
-        items,
-        seller
-    });
+    // ✅ RENDER BASED ON BILL TYPE
+    if (bill.bill_type === "MEMORANDUM") {
+        // Cash Memo
+        res.render("bills/show-memo", {
+            bill,
+            items,
+            seller
+        });
+    } else {
+        // Tax Invoice / Bill of Supply
+        res.render("bills/show.ejs", {
+            bill,
+            items,
+            seller
+        });
+    }
 }));
 
 

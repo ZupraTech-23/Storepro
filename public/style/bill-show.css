@@ -4,206 +4,265 @@
 
 .show-bill {
     font-family: "Inter", "Segoe UI", Arial, sans-serif;
-    background: #eef1f5;
-    color: #222;
-    margin-left: 260px; /* sidebar */
+    background: #e9edf2;
+    color: #000;
+    margin-left: 260px;
 }
 
 .invoice-print {
     max-width: 900px;
-    margin: 24px auto;
+    margin: 16px auto;
     background: #fff;
-    padding: 36px;
-    border-radius: 6px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    padding: 14px;
+    box-shadow: 0 6px 18px rgba(0,0,0,.08);
 }
 
 /* =========================
-   SELLER HEADER
+   HEADER (TALLY STYLE)
 ========================= */
 
-.seller-header {
-    text-align: center;
-    margin-bottom: 20px;
+.invoice-header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 2px solid #000;
+    padding-bottom: 6px;
+    margin-bottom: 6px;
 }
 
-.seller-header h2 {
+.header-left,
+.header-right {
+    width: 32%;
+    font-size: 12.5px;
+}
+
+.header-left h1 {
+    font-size: 18px;
     margin: 0;
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: 0.4px;
+    font-weight: 800;
 }
 
-.seller-header p {
-    margin: 3px 0;
-    font-size: 13px;
-    color: #555;
+.header-left p,
+.header-right p {
+    margin: 1px 0;
+    font-weight: 600;
 }
 
-/* =========================
-   TITLES
-========================= */
-
-.invoice-print > h2 {
+.header-center {
+    width: 36%;
     text-align: center;
-    margin: 20px 0 10px;
-    font-size: 20px;
-    text-transform: uppercase;
+}
+
+.header-center h2 {
+    margin: 6px 0 0;
+    font-size: 18px;
+    font-weight: 800;
     letter-spacing: 1px;
 }
 
-.invoice-print h3 {
-    margin-top: 26px;
-    margin-bottom: 10px;
-    font-size: 15px;
-    border-bottom: 2px solid black;
-    padding-bottom: 6px;
+/* =========================
+   CUSTOMER BOX
+========================= */
+
+.customer-box {
+    border: 1px solid #000;
+    margin-bottom: 6px;
+}
+
+.customer-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+}
+
+.customer-table td {
+    padding: 2px 6px;
+    font-weight: 600;
+}
+
+.customer-table td:first-child {
+    width: 22%;
+    font-weight: 700;
 }
 
 /* =========================
-   META INFO
+   ITEMS TABLE (CORE TALLY)
 ========================= */
 
-.invoice-meta {
-    display: flex;
-    justify-content: space-between;
-    margin: 14px 0;
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
     font-size: 13px;
 }
 
-.invoice-meta p {
-    margin: 3px 0;
+.items-table thead {
+    background: #f2f2f2;
 }
 
-/* =========================
-   TEXT
-========================= */
-
-.invoice-print p {
-    margin: 4px 0;
-    font-size: 13.5px;
-}
-
-/* =========================
-   TABLES
-========================= */
-
-.invoice-print table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 12px;
-    font-size: 13.5px;
-}
-
-.invoice-print thead {
-    background: #f4f6f8;
-}
-
-.invoice-print th {
-    font-weight: 600;
-    text-transform: uppercase;
+.items-table th {
+    border: 1px solid #000;
+    padding: 4px 3px;
     font-size: 12px;
-    color: #444;
-}
-
-.invoice-print th,
-.invoice-print td {
-    border: 1px solid black;
-    padding: 10px 8px;
+    font-weight: 800;
+    text-transform: uppercase;
     text-align: center;
 }
 
-.invoice-print td:nth-child(2) {
+.items-table td {
+    border: 1px solid #000;
+    padding: 2px 3px;      /* 🔥 VERY COMPACT */
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    line-height: 1.25;
+}
+
+.items-table td.left {
     text-align: left;
+    font-weight: 700;
+}
+
+/* Prevent row breaking */
+.items-table tr {
+    page-break-inside: avoid;
 }
 
 /* =========================
-   TAX SUMMARY
+   TOTALS SECTION
 ========================= */
 
-.invoice-print table[width="40%"] {
-    float: right;
-    margin-top: 18px;
+.totals-section {
+    margin-top: 6px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.totals-table {
+    width: 38%;
+    border-collapse: collapse;
     font-size: 13.5px;
 }
 
-.invoice-print table[width="40%"] td {
-    padding: 8px;
+.totals-table td {
+    border: 1px solid #000;
+    padding: 4px 6px;
+    font-weight: 700;
 }
 
-.invoice-print table[width="40%"] tr:last-child th {
-    font-size: 15px;
-    background: #f4f6f8;
+.totals-table td:last-child {
+    text-align: right;
 }
+
+.totals-table .grand-total td {
+    font-size: 15px;
+    font-weight: 800;
+    background: #f2f2f2;
+}
+.totals-section {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+.totals-table tr {
+    page-break-inside: avoid;
+}
+.margin-note {
+    margin-top: 12px;
+    font-size: 12px;
+    color: #333;
+}
+
+
+
+/* =========================
+   FOOTER
+========================= */
+
+.invoice-footer {
+    margin-top: 10px;
+    font-size: 12px;
+    text-align: center;
+    font-weight: 600;
+    border-top: 1px solid #000;
+    padding-top: 4px;
+    
+}
+.invoice-note {
+     font-size: 11.5px;
+    text-align: center;
+    margin-top: 10px;
+    color: #050505;
+    page-break-inside: avoid;
+}
+
 
 /* =========================
    BUTTON
 ========================= */
 
-.invoice-print button {
-    margin-top: 28px;
-    padding: 10px 22px;
-    background: #1f2937;
+button {
+    margin: 16px auto;
+    display: block;
+    padding: 8px 18px;
+    background: #111;
     color: #fff;
     border: none;
     border-radius: 4px;
-    font-size: 14px;
     cursor: pointer;
 }
-
-.invoice-print button:hover {
-    background: #111827;
+/* ===== PAGE CONTINUATION LINE ===== */
+.repeat-line th {
+    font-size: 11px;
+    font-weight: 600;
+    text-align: left;
+    padding: 4px 6px;
+    border-bottom: 1px solid #000;
+    background: #fff;
 }
 
-/* =========================
-   CLEAR FLOAT
-========================= */
-
-.invoice-print::after {
-    content: "";
-    display: block;
-    clear: both;
-}
 
 /* =========================
-   PRINT
+   PRINT MODE (IMPORTANT)
 ========================= */
 
 @media print {
-    /* Hide all links showing URLs */
-    a[href]:after {
-        content: none !important;
-    }
-        header,
+
+    header,
     footer,
-    .app-header,
-    .app-footer {
-        display: none !important;
-    }
-
-
-
-    .sidebar,
-    .navbar,
     nav,
+    .sidebar,
     button {
         display: none !important;
     }
 
+    @page {
+        margin: 6mm;
+    }
+
+    body,
     .show-bill {
-        margin-left: 0 !important;
+        margin: 0 !important;
         background: #fff;
+        font-size: 13px;
     }
 
     .invoice-print {
         box-shadow: none;
-        border-radius: 0;
+        margin: 0;
         padding: 0;
-        margin: 0 auto;
-        width: 100%;
     }
 
-    @page {
-        margin: 12mm;
+    /* 🔥 HEADER REPEAT */
+    .invoice-header {
+        position: sticky;
+        top: 0;
+        background: #fff;
+        z-index: 10;
+    }
+
+    thead {
+        display: table-header-group;
+    }
+
+    tfoot {
+        display: table-footer-group;
     }
 }

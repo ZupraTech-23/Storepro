@@ -1,118 +1,174 @@
 <% layout('/layouts/boilerplate') -%>
-  <link rel="stylesheet" href="/style/bill-show.css">
+    <link rel="stylesheet" href="/style/bill-show.css">
+
+    <body class="show-bill">
+        <% const totalGST=Number(bill.gst_percent || 0); const halfGST=totalGST / 2; %>
+            <% const hasMarginScheme=items.some(i=> i.gst_method === 'margin');
+                %>
 
 
 
-<body class="show-bill">
 
-<div class="invoice-print">
+                <div class="invoice-print">
 
-    <!-- ================= SELLER DETAILS ================= -->
-    <div class="seller-header">
-        <h2><%= seller.company_name %></h2>
+                    <!-- ================= FIXED HEADER (REPEATS ON EVERY PAGE) ================= -->
+                    <div class="invoice-header">
 
-        <p>
-            <%= seller.address %><br>
-            Phone: <%= seller.phone %><br>
-            Email: <%= seller.email %>
-        </p>
+                        <!-- LEFT : SELLER -->
+                        <div class="header-left">
+                            <h1>
+                                <%= seller.company_name %>
+                            </h1>
+                            <p>
+                                <%= seller.address %>
+                            </p>
+                            <p>Ph: <%= seller.phone %>
+                            </p>
+                            <p>Email: <%= seller.email %>
+                            </p>
+                            <% if (seller.gstin) { %>
+                                <p><strong>GSTIN:</strong>
+                                    <%= seller.gstin %>
+                                </p>
+                                <% } %>
+                        </div>
 
-        <% if (seller.gstin) { %>
-            <p><strong>GSTIN:</strong> <%= seller.gstin %></p>
-        <% } %>
-    </div>
+                        <!-- CENTER : TITLE -->
+                        <div class="header-center">
+                            <h2>TAX INVOICE</h2>
+                        </div>
 
-    <hr>
+                        <!-- RIGHT : INVOICE META -->
+                        <div class="header-right">
+                            <p><strong>Invoice No:</strong>
+                                <%= bill.invoice_no %>
+                            </p>
+                            <p><strong>Date:</strong>
+                                <%= new Date(bill.created_at).toDateString() %>
+                            </p>
+                        </div>
 
-    <!-- ================= INVOICE TITLE ================= -->
-    <h2>Tax Invoice</h2>
+                    </div>
 
-    <!-- ================= INVOICE META ================= -->
-    <div class="invoice-meta">
-        <div>
-            <p><strong>Invoice No:</strong> <%= bill.invoice_no %></p>
-            <p><strong>Date:</strong> <%= new Date(bill.created_at).toDateString() %></p>
-        </div>
+                    <!-- ================= CUSTOMER DETAILS (PRINT ONCE) ================= -->
+                    <div class="customer-box">
+                        <table class="customer-table">
+                            <tr>
+                                <td><strong>Buyer Name</strong></td>
+                                <td>: <%= bill.customer_name %>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Address</strong></td>
+                                <td>: <%= bill.customer_address || "N/A" %>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Phone</strong></td>
+                                <td>: <%= bill.customer_phone || "N/A" %>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>GSTIN</strong></td>
+                                <td>: <%= bill.customer_gstin || "N/A" %>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
 
-        
-    </div>
+                    <!-- ================= ITEMS TABLE ================= -->
+                    <table class="items-table">
+                        <thead>
+                            <tr class="repeat-line">
+                                <th colspan="6">
+                                    <%= seller.company_name %> — Invoice No: <%= bill.invoice_no %>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th style="width:5%">#</th>
+                                <th style="width:45%">Particulars</th>
+                                <th style="width:10%">HSN</th>
+                                <th style="width:8%">Qty</th>
+                                <th style="width:12%">Rate</th>
+                                <th style="width:10%">GST %</th>
+                                <th style="width:20%">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% items.forEach((item, index)=> { %>
+                                <tr>
+                                    <td>
+                                        <%= index + 1 %>
+                                    </td>
+                                    <td class="left">
+                                        <%= item.product_name %>
+                                    </td>
+                                    <td>
+                                        <%= item.hsn %>
+                                    </td>
+                                    <td>
+                                        <%= item.quantity %>
+                                    </td>
+                                    <td>₹ <%= Number(item.price).toFixed(2) %>
+                                    </td>
+                                    <td>
+                                        <%= item.gst_method==='margin' ? 'Margin' : item.gst_percent %>
+                                    </td>
 
-    <hr>
+                                    <td>₹ <%= Number(item.total).toFixed(2) %>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
 
-    <!-- ================= CUSTOMER DETAILS ================= -->
-    <h3>Customer Details</h3>
+                    <!-- ================= TOTALS ================= -->
+                    <div class="totals-section">
 
-    <p><strong>Name:</strong> <%= bill.customer_name %></p>
+                        <table class="totals-table">
+                            <tr>
+                                <td>Subtotal</td>
+                                <td>₹ <%= Number(bill.subtotal).toFixed(2) %>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>CGST @ <%= halfGST %>%</td>
+                                <td>₹ <%= Number(bill.cgst).toFixed(2) %>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>SGST @ <%= halfGST %>%</td>
+                                <td>₹ <%= Number(bill.sgst).toFixed(2) %>
+                                </td>
+                            </tr>
+                            <tr class="grand-total">
+                                <td>Grand Total</td>
+                                <td>₹ <%= Number(bill.grand_total).toFixed(2) %>
+                                </td>
+                            </tr>
+                        </table>
 
-    <p><strong>Address:</strong>
-        <%= bill.customer_address || "N/A" %>
-    </p>
+                    </div>
+                    <% if (hasMarginScheme) { %>
+                        <div class="invoice-note margin-note">
+                            <strong>Note:</strong>
+                            GST charged under <strong>Margin Scheme</strong> as per
+                            Rule 32(5) of the CGST Rules, 2017.
+                        </div>
+                        <% } %>
 
-    <p><strong>Phone:</strong> <%= bill.customer_phone || "N/A" %></p>
+                            <div class="invoice-note">
+                                This is a computer generated invoice and does not require a physical signature.
+                            </div>
 
-    <p><strong>GSTIN:</strong> <%= bill.customer_gstin || "N/A" %></p>
+                            <!-- ================= FOOTER ================= -->
 
-    <hr>
 
-    <!-- ================= ITEMS TABLE ================= -->
-    <h3>Items</h3>
 
-    <table>
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Product</th>
-                <th>Qty</th>
-                <th>Price</th>
-                <th>GST %</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% items.forEach((item, index) => { %>
-                <tr>
-                    <td><%= index + 1 %></td>
-                    <td><%= item.product_name %></td>
-                    <td><%= item.quantity %></td>
-                    <td>₹ <%= Number(item.price).toFixed(2) %></td>
-                    <td><%= item.gst_percent %> %</td>
-                    <td>₹ <%= Number(item.total).toFixed(2) %></td>
-                </tr>
-            <% }) %>
-        </tbody>
-    </table>
 
-    <hr>
 
-    <!-- ================= TAX SUMMARY ================= -->
-    <h3>Tax Summary</h3>
+                </div>
 
-    <table width="40%">
-        <tr>
-            <td>Subtotal</td>
-            <td style="text-align:right;">₹ <%= Number(bill.subtotal).toFixed(2) %></td>
-        </tr>
-        <tr>
-            <td>CGST</td>
-            <td style="text-align:right;">₹ <%= Number(bill.cgst).toFixed(2) %></td>
-        </tr>
-        <tr>
-            <td>SGST</td>
-            <td style="text-align:right;">₹ <%= Number(bill.sgst).toFixed(2) %></td>
-        </tr>
-        <tr>
-            <th>Grand Total</th>
-            <th style="text-align:right;">₹ <%= Number(bill.grand_total).toFixed(2) %></th>
-        </tr>
-    </table>
+                <button onclick="window.print()">🖨 Print Invoice</button>
 
-    <div style="clear:both;"></div>
-
-    <hr>
-
-    <!-- ================= ACTIONS ================= -->
-    <button onclick="window.print()">🖨 Print Invoice</button>
-
-</div>
-
-</body>
+    </body>
