@@ -60,8 +60,12 @@
           </div>
           <div>
             <label for="item_condition">Condition (not required for accessories)</label>
-            <input type="text" name="item_condition" data-type="condition" placeholder="e.g new or preowned" class="form-control auto-input" autocomplete="off">
-            <ul class="list-group suggestion-box d-none"></ul>
+            <select name="item_condition" class="form-control" required>
+    <option value="" >Select Condition</option>
+    <option value="NEW">New</option>
+    <option value="PRE_OWNED">Pre-Owned</option>
+</select>
+            
             
             
           </div>

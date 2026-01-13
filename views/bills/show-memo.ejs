@@ -1,0 +1,115 @@
+<% layout('/layouts/boilerplate') -%>
+<link rel="stylesheet" href="/style/show-memo.css">
+
+<body class="show-bill">
+
+<div class="memo-print">
+
+    <!-- ================= SELLER ================= -->
+  <div class="seller-block">
+    <h2><%= seller.company_name %></h2>
+
+    <% if (seller.address) { %>
+        <p class="seller-address"><%= seller.address %></p>
+    <% } %>
+
+    <% if (seller.phone) { %>
+        <p class="seller-contact">
+            Phone: <%= seller.phone %>
+            <% if (seller.email) { %> | Email: <%= seller.email %> <% } %>
+        </p>
+    <% } %>
+</div>
+
+
+    <hr>
+
+    <!-- ================= TITLE ================= -->
+    <h3 class="memo-title">CASH MEMO</h3>
+
+    <!-- ================= META ================= -->
+    <div class="memo-meta">
+        <div>
+            <p><strong>Memo No:</strong> <%= bill.invoice_no %></p>
+        </div>
+        <div>
+            <p><strong>Date:</strong>
+                <%= new Date(bill.created_at).toDateString() %>
+            </p>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- ================= CUSTOMER ================= -->
+    <div class="customer-block">
+        <h4>Customer Details</h4>
+
+        <p><strong>Name:</strong>
+            <%= bill.customer_name || "Walk-in Customer" %>
+        </p>
+
+        <% if (bill.customer_phone) { %>
+            <p><strong>Phone:</strong> <%= bill.customer_phone %></p>
+        <% } %>
+
+        <% if (bill.customer_address) { %>
+            <p><strong>Address:</strong> <%= bill.customer_address %></p>
+        <% } %>
+    </div>
+
+    <hr>
+
+    <!-- ================= ITEMS ================= -->
+    <table class="memo-items">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Item Description</th>
+                <th>Qty</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <% items.forEach((item, i) => { %>
+                <tr>
+                    <td><%= i + 1 %></td>
+                    <td><%= item.product_name %></td>
+                    <td><%= item.quantity %></td>
+                    <td>₹ <%= Number(item.total).toFixed(2) %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <!-- ================= TOTAL ================= -->
+    <div class="memo-total">
+        <span>Grand Total</span>
+        <span>₹ <%= Number(bill.grand_total).toFixed(2) %></span>
+    </div>
+
+    <!-- ================= NOTE ================= -->
+    <small class="cash-note">
+        Amount is inclusive of applicable taxes
+    </small>
+    <div class="invoice-note">
+    This is a computer generated cash memo and does not require a physical signature.
+</div>
+
+
+    <!-- ================= FOOTER ================= -->
+    <div class="thank-you">
+        Thank you for your purchase!
+    </div>
+
+    <hr>
+
+    <!-- ================= ACTION ================= -->
+    <button   onclick="window.print()" class="print-btn">🖨 Print Invoice</button>
+
+</div>
+
+</body>
