@@ -1,0 +1,186 @@
+<% layout('/layouts/boilerplate') -%>
+<link rel="stylesheet" href="/style/bos.css">
+
+
+
+<div class="bos-page">
+  <div class="top ">
+
+  <!-- PAYMENTS (always visible) -->
+ <% if (bill.status === 'CANCELLED') { %>
+  <div class="cancel-banner">
+    ❌ THIS BILL HAS BEEN CANCELLED — DO NOT USE
+  </div>
+ <%  }%>
+ 
+   
+<% if (bill.status !== 'CANCELLED') { %>
+     <a href="/bills/<%= bill.id %>/payments">
+    <button class="print-btn">Payments</button>
+  </a>
+    <a href="/bills/<%= bill.id %>/edit">
+      <button class="print-btn">Edit</button>
+    </a>
+  
+  <form method="POST" action="/bills/<%= bill.id %>/cancel">
+    <button type="submit" class="print-btn">Cancel Bill</button>
+  </form>
+    <button   onclick="window.print()" class="print-btn">🖨 Print Invoice</button>
+  
+
+    <% } %>
+
+
+  <!-- EDIT & CANCEL (only if unpaid & active) -->
+ 
+  <!-- PRINT -->
+
+</div>
+
+  <div class="bos-container">
+                                                       <% if (bill.status === 'CANCELLED') { %>
+  <div class="invoice-watermark">CANCELLED</div>
+<% } %>
+
+    <!-- ================= HEADER ================= -->
+    <div class="bos-header">
+      <div class="header-center">
+                                     <h1 class="memo-title">
+  <%= bill.status === 'CANCELLED' ? 'CANCELLED BILL OF SUPPLY' : bill.bill_type.replace('_', ' ') %>
+</h1>
+        <p>(Issued under Section 31(3)(c) of CGST Act)</p>
+      </div>
+    </div>
+
+    <!-- ================= SELLER + BILL INFO ================= -->
+    <div class="bos-top">
+
+      <div class="seller-box">
+        <div class="box-title">Seller Details</div>
+
+        <div class="row">
+          <span class="label">Name:</span>
+          <span class="value"><%= seller.company_name%></span>
+        </div>
+
+        <div class="row">
+          <span class="label">Address:</span>
+          <span class="value"><%= seller.address %></span>
+        </div>
+
+        <div class="row">
+          <span class="label">Phone:</span>
+          <span class="value"><%= seller.phone || "-" %></span>
+        </div>
+        <div class="row">
+          <span class="label">GSTIN:</span>
+          <span class="value"><%= seller.gstin|| "-" %></span>
+        </div>
+      </div>
+
+      <div class="bill-box">
+        <div class="box-title">Bill Details</div>
+
+        <div class="row">
+          <span class="label">Bill No:</span>
+          <span class="value"><%= bill.invoice_no %></span>
+        </div>
+
+        <div class="row">
+          <span class="label">Date:</span>
+          <span class="value"><%= new Date(bill.created_at).toLocaleDateString() %></span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================= BUYER ================= -->
+    <div class="buyer-box">
+      <div class="box-title">Buyer Details</div>
+
+      <div class="row">
+        <span class="label">Customer Name:</span>
+        <span class="value"><%= bill.customer_name %></span>
+      </div>
+
+      <div class="row">
+        <span class="label">Address:</span>
+        <span class="value"><%= bill.customer_address || "-" %></span>
+      </div>
+
+      <div class="row">
+        <span class="label">Phone:</span>
+        <span class="value"><%= bill.customer_phone || "-" %></span>
+      </div>
+    </div>
+
+    <!-- ================= ITEMS TABLE ================= -->
+    <table class="items-table">
+      <thead>
+        <tr class="repeat-line">
+                                <th colspan="6">
+                                    <%= seller.company_name %> — Invoice No: <%= bill.invoice_no %>
+                                </th>
+                            </tr>
+        <tr>
+          <th>S.No</th>
+          <th>Description of Goods</th>
+          <th>HSN</th>
+          <th>Qty</th>
+          <th>Rate (₹)</th>
+          <th>Amount (₹)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% let i = 1; %>
+        <% items.forEach(item => { %>
+          <tr>
+            <td><%= i++ %></td>
+            <td class="left"><%= item.product_name %></td>
+            <td><%= item.hsn %></td>
+            <td><%= item.quantity %></td>
+            <td class="right"><%= Number(item.price).toFixed(2) %></td>
+            <td class="right">
+              <%= (Number(item.price) * Number(item.quantity)).toFixed(2) %>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+    <!-- ================= TOTALS ================= -->
+    <div class="totals-box">
+      <div class="total-row">
+        <span>Sub Total</span>
+        <span>₹ <%= Number(bill.subtotal).toFixed(2) %></span>
+      </div>
+      <div class="total-row">
+        <span>GST</span>
+        <span>₹ 0.00</span>
+      </div>
+      <div class="total-row grand">
+        <span>Grand Total</span>
+        <span>₹ <%= Number(bill.subtotal).toFixed(2) %></span>
+      </div>
+    </div>
+
+    <!-- ================= DECLARATION ================= -->
+    <div class="declaration">
+      <strong>Declaration:</strong>
+      GST is not applicable on this supply. This document is issued
+      in lieu of a tax invoice as per GST law.
+    </div>
+
+    <!-- ================= FOOTER ================= -->
+    <div class="footer-note">
+      This is a computer generated bill. No signature required.
+    </div>
+
+  </div>
+  
+
+
+ 
+
+  
+</div>

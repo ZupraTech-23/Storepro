@@ -23,14 +23,37 @@ body.show-bill {
 
 /* Print button */
 .print-btn {
-    margin-top: 16px;
-    padding: 8px 18px;
-    background: #1f2937;
+      padding: 8px 18px;
+    background: #111;
     color: #fff;
     border: none;
     border-radius: 4px;
-    font-size: 13px;
     cursor: pointer;
+}
+.cancel-banner {
+  background: #ffecec;
+  color: #c0392b;
+  border: 2px solid #c0392b;
+  padding: 12px;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+.invoice-wrapper {
+  position: relative;
+}
+
+.invoice-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-30deg);
+  font-size: 90px;
+  color: rgba(192, 57, 43, 0.18);
+  font-weight: bold;
+  z-index: 10;
+  pointer-events: none;
 }
 
 /* ================= A4 CONTAINER ================= */
@@ -167,6 +190,11 @@ body.show-bill {
     font-size: 13px;
     text-align: center;
     font-weight: bold;
+}
+.top{
+    display: flex;
+    justify-content: end;
+    gap: 12px;
 }
 
 /* ================= PRINT SETTINGS ================= */

@@ -4,7 +4,7 @@
 
 .show-bill {
     font-family: "Inter", "Segoe UI", Arial, sans-serif;
-    background: #e9edf2;
+    
     color: #000;
     margin-left: 260px;
 }
@@ -15,6 +15,10 @@
     background: #fff;
     padding: 14px;
     box-shadow: 0 6px 18px rgba(0,0,0,.08);
+    border: 1px solid rgba(46, 45, 45, 0.672);   /* light slate */
+
+
+    
 }
 
 /* =========================
@@ -32,7 +36,7 @@
 .header-left,
 .header-right {
     width: 32%;
-    font-size: 12.5px;
+    font-size: 14px;
 }
 
 .header-left h1 {
@@ -54,7 +58,7 @@
 
 .header-center h2 {
     margin: 6px 0 0;
-    font-size: 18px;
+    font-size: 24px;
     font-weight: 800;
     letter-spacing: 1px;
 }
@@ -96,6 +100,7 @@
 
 .items-table thead {
     background: #f2f2f2;
+    
 }
 
 .items-table th {
@@ -105,6 +110,7 @@
     font-weight: 800;
     text-transform: uppercase;
     text-align: center;
+    color: black;
 }
 
 .items-table td {
@@ -199,8 +205,8 @@
 ========================= */
 
 button {
-    margin: 16px auto;
-    display: block;
+    /* margin: 16px auto; */
+    /* display: block; */
     padding: 8px 18px;
     background: #111;
     color: #fff;
@@ -212,10 +218,42 @@ button {
 .repeat-line th {
     font-size: 11px;
     font-weight: 600;
-    text-align: left;
+    text-align: center;
     padding: 4px 6px;
     border-bottom: 1px solid #000;
     background: #fff;
+    color: black;
+}
+.top{
+    display: flex;
+    justify-content: end;
+    gap: 12px;
+}
+.cancel-banner {
+  background: #ffecec;
+  color: #c0392b;
+  border: 2px solid #c0392b;
+  padding: 12px;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.invoice-wrapper {
+  position: relative;
+}
+
+.invoice-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-30deg);
+  font-size: 90px;
+  color: rgba(192, 57, 43, 0.18);
+  font-weight: bold;
+  z-index: 10;
+  pointer-events: none;
 }
 
 
@@ -247,7 +285,7 @@ button {
     .invoice-print {
         box-shadow: none;
         margin: 0;
-        padding: 0;
+        padding: 14px;
     }
 
     /* 🔥 HEADER REPEAT */
@@ -261,7 +299,7 @@ button {
     thead {
         display: table-header-group;
     }
-
+    
     tfoot {
         display: table-footer-group;
     }

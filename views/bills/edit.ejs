@@ -1,0 +1,341 @@
+<% layout('/layouts/boilerplate') -%>
+<link rel="stylesheet" href="/style/bill-new.css">
+
+<body class="billing">
+
+<h2>Edit Bill</h2>
+
+<form method="POST" action="/bills/<%= bill.id %>/update" class="bill-form">
+
+  <!-- =========================
+       BILL TYPE
+  ========================== -->
+  <label>Bill Type</label>
+  <select name="bill_type" id="bill_type" required>
+    <option value="TAX_INVOICE" <%= bill.bill_type === 'TAX_INVOICE' ? 'selected' : '' %>>
+      Tax Invoice
+    </option>
+    <option value="BILL_OF_SUPPLY" <%= bill.bill_type === 'BILL_OF_SUPPLY' ? 'selected' : '' %>>
+      Bill of Supply
+    </option>
+    <option value="MEMORANDUM" <%= bill.bill_type === 'MEMORANDUM' ? 'selected' : '' %>>
+      Cash Memo
+    </option>
+  </select>
+
+  <hr>
+
+  <!-- =========================
+       CUSTOMER DETAILS
+  ========================== -->
+  <h3>Customer Details</h3>
+
+  <input
+    type="text"
+    name="customer_name"
+    placeholder="Customer Name"
+    value="<%= bill.customer_name %>"
+    required
+  >
+
+  <input
+    type="text"
+    name="customer_phone"
+    placeholder="Phone"
+    value="<%= bill.customer_phone %>"
+  >
+
+  <input
+    type="text"
+    name="customer_address"
+    placeholder="Customer Address"
+    value="<%= bill.customer_address %>"
+  >
+
+  <input
+    type="text"
+    name="customer_gstin"
+    placeholder="GSTIN (optional)"
+    value="<%= bill.customer_gstin %>"
+  >
+
+  <hr>
+
+  <!-- =========================
+       ITEMS
+  ========================== -->
+  <h3>Items</h3>
+
+  <table id="itemsTable">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Qty</th>
+        <th>Price</th>
+        <th class="gst-col">GST %</th>
+        <th class="gst-method-col">GST Method</th>
+        <th>Total</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+
+    <tbody>
+    <% items.forEach((it, index) => { %>
+      <tr>
+        <!-- PRODUCT -->
+        <td>
+          <div class="form-row position-relative" style="margin:0">
+            <input
+              type="text"
+              class="form-control auto-input"
+              name="items[<%= index %>][product_name]"
+              value="<%= it.product_name %>"
+              autocomplete="off"
+              required
+            >
+
+            <input type="hidden" name="items[<%= index %>][product_id]" value="<%= it.product_id %>">
+            <input type="hidden" name="items[<%= index %>][purchase_price]" value="<%= it.purchase_price %>">
+            <input type="hidden" name="items[<%= index %>][stock]" value="<%= it.stock %>">
+            <input type="hidden" name="items[<%= index %>][condition]" value="<%= it.item_condition %>">
+
+            <ul class="list-group suggestion-box d-none"></ul>
+          </div>
+        </td>
+
+        <!-- QTY -->
+        <td>
+          <input
+            type="number"
+            name="items[<%= index %>][quantity]"
+            min="1"
+            value="<%= it.quantity %>"
+          >
+        </td>
+
+        <!-- PRICE -->
+        <td>
+          <input
+            type="number"
+            name="items[<%= index %>][price]"
+            step="0.01"
+            value="<%= it.price %>"
+          >
+        </td>
+
+        <!-- GST % -->
+        <td class="gst-col">
+          <input
+            type="number"
+            name="items[<%= index %>][gst_percent]"
+            value="<%= it.gst_percent %>"
+          >
+        </td>
+
+        <!-- GST METHOD -->
+        <td class="gst-method-cell">
+          <select name="items[<%= index %>][gst_method]" class="gst-method">
+            <option value="normal" <%= it.gst_method === 'normal' ? 'selected' : '' %>>
+              Normal GST
+            </option>
+            <option value="margin" <%= it.gst_method === 'margin' ? 'selected' : '' %>>
+              Margin Scheme
+            </option>
+          </select>
+        </td>
+
+        <!-- TOTAL -->
+        <td>
+          <input
+            type="text"
+            name="items[<%= index %>][total]"
+            value="<%= it.total %>"
+            readonly
+          >
+        </td>
+
+        <!-- ACTION -->
+        <td>
+          <button type="button" onclick="removeRow(this)">❌</button>
+        </td>
+      </tr>
+    <% }) %>
+    </tbody>
+  </table>
+
+  <button type="button" class="add-btn" onclick="addRow()">+ Add Item</button>
+
+  <hr>
+
+  <!-- =========================
+       TAX SUMMARY
+  ========================== -->
+  <h3>Tax Summary</h3>
+
+  <div class="tax-summary">
+    <input
+      type="text"
+      id="subtotal"
+      name="subtotal"
+      value="<%= bill.subtotal %>"
+      readonly
+    >
+
+    <div class="gst-breakup">
+      <input
+        type="text"
+        id="cgst"
+        name="cgst"
+        value="<%= bill.cgst %>"
+        readonly
+      >
+      <input
+        type="text"
+        id="sgst"
+        name="sgst"
+        value="<%= bill.sgst %>"
+        readonly
+      >
+    </div>
+
+    <input
+      type="text"
+      id="grandTotal"
+      name="grand_total"
+      value="<%= bill.grand_total %>"
+      readonly
+    >
+  </div>
+
+  <input type="hidden" id="billGstPercent" name="gst_percent">
+
+  <hr>
+
+  <button type="submit">Update Bill</button>
+</form>
+
+<!-- =========================
+     SCRIPTS
+========================== -->
+<script>
+  let rowIndex = <%= items.length %>;
+  function addRow() {
+    const tbody = document.querySelector("#itemsTable tbody");
+    const firstRow = tbody.rows[0];
+    const newRow = firstRow.cloneNode(true);
+
+    newRow.querySelectorAll("input, select").forEach(el => {
+        el.name = el.name.replace(/\[\d+\]/, `[${rowIndex}]`);
+        if (el.tagName === "INPUT") el.value = "";
+    });
+
+    tbody.appendChild(newRow);
+    // ensure new row UI follows current bill type
+    if (typeof handleBillTypeUI === 'function') handleBillTypeUI();
+    rowIndex++;
+}
+
+
+function removeRow(btn) {
+    const tbody = document.querySelector("#itemsTable tbody");
+    if (tbody.rows.length > 1) {
+        btn.closest("tr").remove();
+    }
+}
+
+document.querySelectorAll("select[name*='[product_id]']").forEach(select => {
+    if (select.value) {
+        select.dispatchEvent(new Event('change'));
+    }
+});
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const products = JSON.parse(
+    document.getElementById("products-data").textContent
+  );
+
+  document.addEventListener("input", function (e) {
+    if (!e.target.classList.contains("auto-input")) return;
+
+    const input = e.target;
+    const formRow = input.closest(".form-row");
+    const box = formRow.querySelector(".suggestion-box");
+    const query = input.value.toLowerCase();
+
+    box.innerHTML = "";
+
+    if (!query) {
+      box.classList.add("d-none");
+      return;
+    }
+
+    const matches = products.filter(p =>
+      p.name.toLowerCase().includes(query)
+    );
+
+    matches.forEach(p => {
+      const li = document.createElement("li");
+      li.className = "list-group-item list-group-item-action";
+      li.textContent = `${p.name} (Stock: ${p.stock})`;
+
+      li.addEventListener("click", () => {
+        input.value = p.name;
+
+        const row = formRow.closest("tr");
+
+        formRow.querySelector('[name$="[product_id]"]').value = p.id;
+        formRow.querySelector('[name$="[purchase_price]"]').value = p.purchase_price;
+        formRow.querySelector('[name$="[stock]"]').value = p.stock;
+        formRow.querySelector('[name$="[condition]"]').value = p.item_condition;
+
+        // Set visible price field in table row
+        row.querySelector('input[name*="[price]"]').value = p.selling_price;
+
+        // Set quantity to 1 and trigger calculations
+        const qtyInput = row.querySelector('input[name*="[quantity]"]');
+        qtyInput.value = 1;
+
+        box.classList.add("d-none");
+
+        // Dispatch change event to trigger calculations
+        const productIdInput = formRow.querySelector('[name$="[product_id]"]');
+        productIdInput.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+
+      box.appendChild(li);
+    });
+
+    box.classList.toggle("d-none", matches.length === 0);
+  });
+
+  // Hide suggestions when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".form-row")) {
+      document.querySelectorAll(".suggestion-box")
+        .forEach(box => box.classList.add("d-none"));
+    }
+  });
+
+});
+
+
+</script>
+
+<script src="/js/bills-new.js"></script>
+
+<script type="application/json" id="products-data">
+<%- JSON.stringify(products) %>
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("#itemsTable tbody tr").forEach(row => {
+    if (typeof calculateRow === "function") calculateRow(row);
+  });
+  if (typeof calculateTotals === "function") calculateTotals();
+});
+</script>
+
+</body>
