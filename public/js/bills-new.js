@@ -4,11 +4,8 @@ function calculateRow(row) {
     const price = Number(row.querySelector("input[name*='[price]']").value || 0);
     const gstPercent = Number(row.querySelector("input[name*='[gst_percent]']").value || 0);
 
-    const productSelect = row.querySelector("select[name*='[product_id]']");
-    const stock = Number(productSelect?.selectedOptions[0]?.dataset.stock || 0);
-    const purchasePrice = Number(
-        productSelect?.selectedOptions[0]?.dataset.purchase_price || 0
-    );
+    const stock = Number(row.querySelector("input[name*='[stock]']").value || 0);
+    const purchasePrice = Number(row.querySelector("input[name*='[purchase_price]']").value || 0);
 
     if (qty > stock && stock > 0) {
         alert(`Only ${stock} items available`);
@@ -17,8 +14,14 @@ function calculateRow(row) {
     }
 const taxable = qty * price;
 
+
 // 🔒 STEP 1.1: get bill type
 const billType = billTypeSelect.value;
+if (billType === "BILL_OF_SUPPLY") {
+    row.querySelector("input[name*='[total]']").value =
+        taxable.toFixed(2);
+    return;
+}
 
 // 🔒 STEP 1.2: read gst method
 let gstMethod = row.querySelector(".gst-method")?.value;
@@ -58,18 +61,17 @@ function calculateTotals() {
         const price = Number(row.querySelector("input[name*='[price]']").value || 0);
         const gstPercent = Number(row.querySelector("input[name*='[gst_percent]']").value || 0);
 
-        const productSelect = row.querySelector("select[name*='[product_id]']");
-        const purchasePrice = Number(
-            productSelect?.selectedOptions[0]?.dataset.purchase_price || 0
-        );
-
-        let gstMethod = row.querySelector(".gst-method")?.value;
+        const purchasePrice = Number(row.querySelector("input[name*='[purchase_price]']").value || 0);
 
         const rowSubtotal = qty * price;
+        subtotal += rowSubtotal;
+
+        // 🔒 BILL OF SUPPLY → NO GST
+        if (billTypeSelect.value === "BILL_OF_SUPPLY") return;
+
+        let gstMethod = row.querySelector(".gst-method")?.value;
         let rowGST = 0;
-        if (billTypeSelect.value !== "TAX_INVOICE") {
-        gstMethod = "normal";
-}
+
         if (gstMethod === "margin") {
             const margin = (price - purchasePrice) * qty;
             if (margin > 0) {
@@ -79,19 +81,21 @@ function calculateTotals() {
             rowGST = (rowSubtotal * gstPercent) / 100;
         }
 
-        subtotal += rowSubtotal;
         totalGSTAmount += rowGST;
     });
 
-    const cgst = totalGSTAmount / 2;
-    const sgst = totalGSTAmount / 2;
-    const grandTotal = subtotal + totalGSTAmount;
+    const isBOS = billTypeSelect.value === "BILL_OF_SUPPLY";
+
+    const cgst = isBOS ? 0 : totalGSTAmount / 2;
+    const sgst = isBOS ? 0 : totalGSTAmount / 2;
+    const grandTotal = isBOS ? subtotal : subtotal + totalGSTAmount;
 
     document.getElementById("subtotal").value = subtotal.toFixed(2);
     document.getElementById("cgst").value = cgst.toFixed(2);
     document.getElementById("sgst").value = sgst.toFixed(2);
     document.getElementById("grandTotal").value = grandTotal.toFixed(2);
 }
+
 function handleBillTypeUI() {
     const billType = billTypeSelect.value;
     const isTaxInvoice = billType === "TAX_INVOICE";
@@ -103,6 +107,8 @@ function handleBillTypeUI() {
         const gstMethod = row.querySelector(".gst-method");
 
         if (isBillOfSupply) {
+            document.getElementById("cgst").value = "0.00";
+            document.getElementById("sgst").value = "0.00";
             // BILL OF SUPPLY: GST not applicable
             if (gstMethod) {
                 gstMethod.value = "normal";
@@ -153,14 +159,13 @@ const billTypeSelect = document.getElementById("bill_type");
    GST METHOD UI (SINGLE SOURCE OF TRUTH)
 ========================= */
 function updateGSTMethodUI(row) {
-    const productSelect = row.querySelector("select[name*='[product_id]']");
     const gstMethod = row.querySelector(".gst-method");
     const gstInput = row.querySelector("input[name*='[gst_percent]']");
     const billType = billTypeSelect.value;
 
-    if (!productSelect || !gstMethod || !gstInput) return;
+    if (!gstMethod || !gstInput) return;
 
-    const condition = productSelect.selectedOptions[0]?.dataset.condition;
+    const condition = row.querySelector("input[name*='[condition]']").value;
 
     if (billType === "BILL_OF_SUPPLY") {
         // BILL OF SUPPLY: hide GST method (keep its space) and disable GST input
@@ -201,16 +206,22 @@ function updateGSTMethodUI(row) {
    PRODUCT SELECTION
 ========================= */
 document.addEventListener("change", function (e) {
-    if (!e.target.matches("select[name*='[product_id]']")) return;
+    if (!e.target.matches("select[name*='[product_id]']") && 
+        !e.target.matches("input[name*='[product_id]']")) return;
 
     const row = e.target.closest("tr");
-    const selected = e.target.selectedOptions[0];
-    if (!row || !selected) return;
+    if (!row) return;
 
-    // auto-fill price & qty
-    row.querySelector("input[name*='[price]']").value =
-        selected.dataset.price || 0;
-    row.querySelector("input[name*='[quantity]']").value = 1;
+    // Handle both select (if used) and hidden input (from autocomplete)
+    if (e.target.tagName === "SELECT") {
+        const selected = e.target.selectedOptions[0];
+        if (!selected) return;
+        row.querySelector("input[name*='[price]']").value =
+            selected.dataset.price || 0;
+    } else if (e.target.matches("input[name*='[product_id]']")) {
+        // Product selected from autocomplete - price is already set
+        // Just trigger calculations
+    }
 
     updateGSTMethodUI(row);
     calculateRow(row);
@@ -267,3 +278,5 @@ document.addEventListener("change", function (e) {
 
 billTypeSelect.addEventListener("change", handleBillTypeUI);
 document.addEventListener("DOMContentLoaded", handleBillTypeUI);
+
+

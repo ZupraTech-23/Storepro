@@ -1,0 +1,106 @@
+<% layout('/layouts/boilerplate') -%>
+
+<link rel="stylesheet" href="/style/payment.css">
+
+<div class="billing payments-page">
+
+  <div class="billing-header">
+    <h1>Payments – Bill <%= bill.invoice_no %></h1>
+  </div>
+
+  <div class="payment-box">
+
+    <!-- SUMMARY -->
+    <div class="payment-summary">
+      <div class="item">
+        <span>Total</span>
+        <span class="amount">
+          ₹<%= bill.grand_total %>
+        </span>
+        
+      </div>
+
+      <div class="item">
+        <span>Paid</span>
+        <span class="amount">
+        ₹<%= paidAmount %>
+
+        </span>
+      </div>
+
+      <div class="item balance">
+        <span>Balance</span>
+        <span class="amount" style="color: red !important;">
+        ₹<%= balance %>
+
+        </span>
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <table class="payment-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Mode</th>
+          <th>Amount</th>
+          <th>Reference</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (!payments.length) { %>
+          <tr>
+            <td colspan="4" style="text-align:center;">No payments yet</td>
+          </tr>
+        <% } %>
+
+        <% payments.forEach(p => { %>
+          <tr>
+            <td><%= p.payment_date.toDateString()%></td>
+            <td><%= new Date(p.created_at).toLocaleTimeString('en-IN', {
+  hour: '2-digit',
+  minute: '2-digit'
+}) %>
+</td>
+            <td><%= p.mode %></td>
+            <td>₹<%= p.amount %></td>
+            <td><%= p.reference_no || "-" %></td>
+            <% if (bill.status !== 'CANCELLED') { %>
+              <td>
+                <form method="POST" action="/bills/<%= bill.id %>/payments/<%= p.id %>/delete"
+        onsubmit="return confirm('Delete this payment?')">
+    <button class="btn-danger" style="border-radius: 5px; padding: 2px;">Delete</button>
+  </form>
+              </td>
+  
+<% } %>
+
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+    <!-- ADD PAYMENT -->
+    <form class="payment-form" method="POST">
+      <div class="row">
+        <input type="number" name="amount" value="<%= balance %>" required>
+        <select name="mode" required>
+          <option value="CASH">Cash</option>
+          <option value="UPI">UPI</option>
+          <option value="BANK">Bank</option>
+          <option value="CARD">Card</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <input type="date" name="payment_date" required>
+        <input type="text" name="reference_no" placeholder="Reference (optional)">
+      </div>
+
+      <div class="row">
+        <textarea name="notes" placeholder="Notes (optional)"></textarea>
+      </div>
+
+      <button class="create">Save Payment</button>

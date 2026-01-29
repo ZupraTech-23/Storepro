@@ -1,11 +1,16 @@
-/* MAIN BILLING WRAPPER */
+/* =========================
+   MAIN BILLING WRAPPER
+========================= */
+
 .billing {
   margin-left: 260px;          /* SAME as sidebar */
-  
   min-height: 100vh;
 }
 
-/* HEADER */
+/* =========================
+   HEADER
+========================= */
+
 .billing-header {
   display: flex;
   justify-content: space-between;
@@ -17,7 +22,10 @@
   color: #0f172a;
 }
 
-/* BUTTON */
+/* =========================
+   BUTTON
+========================= */
+
 .create {
   background-color: #1d4ed8;
   color: #fff;
@@ -28,11 +36,14 @@
   font-size: 0.9rem;
 }
 
-.btn:hover {
-  background: #1d4ed8;
+.create:hover {
+  background: #1e40af;
 }
 
-/* BOX */
+/* =========================
+   BOX
+========================= */
+
 .billing-box {
   background: #fff;
   padding: 25px;
@@ -41,7 +52,10 @@
   margin-top: 50px;
 }
 
-/* TABLE */
+/* =========================
+   TABLE
+========================= */
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -54,6 +68,7 @@ th, td {
 
 th {
   text-align: left;
+  font-weight: 700;
   color: #64748b;
 }
 
@@ -61,24 +76,32 @@ tr:not(:last-child) {
   border-bottom: 1px solid #e5e7eb;
 }
 
-/* BADGES */
+/* =========================
+   BADGES (PAYMENT STATUS)
+========================= */
+
 .badge {
   padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.75rem;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
+/* PAID */
 .badge.paid {
   background: #dcfce7;
   color: #166534;
 }
 
+/* PARTIAL */
+.badge.partial {
+  background: #ffedd5;
+  color: #9a3412;
+}
+
+/* DUE */
 .badge.pending {
   background: #fee2e2;
   color: #991b1b;
-}
-
-.badge.overdue {
-  background: #ffedd5;
-  color: #9a3412;
 }

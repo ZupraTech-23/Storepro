@@ -1,9 +1,44 @@
 <% layout('/layouts/boilerplate') -%>
 <link rel="stylesheet" href="/style/show-memo.css">
+<div class="top no-print">
+
+  <!-- PAYMENTS (always visible) -->
+ <% if (bill.status === 'CANCELLED') { %>
+  <div class="cancel-banner">
+    ❌ THIS BILL HAS BEEN CANCELLED — DO NOT USE
+  </div>
+ <%  }%>
+ 
+   
+<% if (bill.status !== 'CANCELLED') { %>
+     <a href="/bills/<%= bill.id %>/payments">
+    <button class="print-btn">Payments</button>
+  </a>
+    <a href="/bills/<%= bill.id %>/edit">
+      <button class="print-btn">Edit</button>
+    </a>
+  
+  <form method="POST" action="/bills/<%= bill.id %>/cancel">
+    <button type="submit" class="print-btn">Cancel Bill</button>
+  </form>
+    <button   onclick="window.print()" class="print-btn">🖨 Print Invoice</button>
+  
+
+    <% } %>
+
+
+  <!-- EDIT & CANCEL (only if unpaid & active) -->
+ 
+  <!-- PRINT -->
+
+</div>
 
 <body class="show-bill">
 
 <div class="memo-print">
+                                                   <% if (bill.status === 'CANCELLED') { %>
+  <div class="invoice-watermark">CANCELLED</div>
+<% } %>
 
     <!-- ================= SELLER ================= -->
   <div class="seller-block">
@@ -25,7 +60,10 @@
     <hr>
 
     <!-- ================= TITLE ================= -->
-    <h3 class="memo-title">CASH MEMO</h3>
+    
+                               <h3 class="memo-title">
+  <%= bill.status === 'CANCELLED' ? 'CANCELLED CASH MEMO' : bill.bill_type.replace('_', ' ') %>
+</h3>
 
     <!-- ================= META ================= -->
     <div class="memo-meta">
@@ -108,7 +146,6 @@
     <hr>
 
     <!-- ================= ACTION ================= -->
-    <button   onclick="window.print()" class="print-btn">🖨 Print Invoice</button>
 
 </div>
 

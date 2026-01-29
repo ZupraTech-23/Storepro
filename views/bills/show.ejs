@@ -1,7 +1,43 @@
 <% layout('/layouts/boilerplate') -%>
     <link rel="stylesheet" href="/style/bill-show.css">
 
+
+
+<div class="top no-print">
+
+  <!-- PAYMENTS (always visible) -->
+ <% if (bill.status === 'CANCELLED') { %>
+  <div class="cancel-banner">
+    ❌ THIS BILL HAS BEEN CANCELLED — DO NOT USE
+  </div>
+ <%  }%>
+ 
+   
+<% if (bill.status !== 'CANCELLED') { %>
+     <a href="/bills/<%= bill.id %>/payments">
+    <button>Payments</button>
+  </a>
+    <a href="/bills/<%= bill.id %>/edit">
+      <button>Edit</button>
+    </a>
+  
+  <form method="POST" action="/bills/<%= bill.id %>/cancel">
+    <button type="submit">Cancel Bill</button>
+  </form>
+  <button onclick="window.print()">🖨 Print Invoice</button>
+
+    <% } %>
+
+
+  <!-- EDIT & CANCEL (only if unpaid & active) -->
+ 
+  <!-- PRINT -->
+
+</div>
+
+
     <body class="show-bill">
+        
         <% const totalGST=Number(bill.gst_percent || 0); const halfGST=totalGST / 2; %>
             <% const hasMarginScheme=items.some(i=> i.gst_method === 'margin');
                 %>
@@ -10,6 +46,9 @@
 
 
                 <div class="invoice-print">
+                                                <% if (bill.status === 'CANCELLED') { %>
+  <div class="invoice-watermark">CANCELLED</div>
+<% } %>
 
                     <!-- ================= FIXED HEADER (REPEATS ON EVERY PAGE) ================= -->
                     <div class="invoice-header">
@@ -35,7 +74,10 @@
 
                         <!-- CENTER : TITLE -->
                         <div class="header-center">
-                            <h2>TAX INVOICE</h2>
+                            <h2>
+  <%= bill.status === 'CANCELLED' ? 'CANCELLED INVOICE' : bill.bill_type.replace('_', ' ') %>
+</h2>
+
                         </div>
 
                         <!-- RIGHT : INVOICE META -->
@@ -80,19 +122,18 @@
                     <table class="items-table">
                         <thead>
                             <tr class="repeat-line">
-                                <th colspan="6">
+                                <th colspan=8">
                                     <%= seller.company_name %> — Invoice No: <%= bill.invoice_no %>
                                 </th>
                             </tr>
                             <tr>
                                 <th style="width:5%">#</th>
-                                <th style="width:45%">Particulars</th>
+                                <th style="width:35%">Particulars</th>
                                 <th style="width:10%">HSN</th>
                                 <th style="width:8%">Qty</th>
                                 <th style="width:12%">Rate</th>
                                 <th style="width:10%">GST %</th>
-                                <th style="width:20%">Amount</th>
-                            </tr>
+                                <th style="width:20%">Amount</th </tr>
                         </thead>
                         <tbody>
                             <% items.forEach((item, index)=> { %>
@@ -167,8 +208,10 @@
 
 
 
+
+
+
                 </div>
 
-                <button onclick="window.print()">🖨 Print Invoice</button>
 
     </body>

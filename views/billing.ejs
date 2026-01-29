@@ -1,14 +1,12 @@
 <% layout('/layouts/boilerplate') %>
-  <link rel="stylesheet" href="/style/billing.css">
-
+<link rel="stylesheet" href="/style/billing.css">
 
 <div class="billing">
 
   <div class="billing-header">
     <h1>Billing</h1>
-    <a href="http://localhost:8080/bills/new">
-    <button class="create">+ Create Invoice</button>
-
+    <a href="/bills/new">
+      <button class="create">+ Create Invoice</button>
     </a>
   </div>
 
@@ -22,29 +20,47 @@
         <th>Status</th>
       </tr>
 
-      <tr>
-        <td>#INV-2031</td>
-        <td>Ahmad Traders</td>
-        <td>12 Aug 2025</td>
-        <td>₹18,400</td>
-        <td><span class="badge paid">Paid</span></td>
-      </tr>
+      <% if (!bills.length) { %>
+        <tr>
+          <td colspan="5" style="text-align:center;">No invoices found</td>
+        </tr>
+      <% } %>
 
-      <tr>
-        <td>#INV-2032</td>
-        <td>Khan Stores</td>
-        <td>14 Aug 2025</td>
-        <td>₹9,700</td>
-        <td><span class="badge pending">Pending</span></td>
-      </tr>
+      <% bills.forEach(bill => { %>
+        <tr>
+          <td>
+            <a style="color: black;" href="/bills/<%= bill.id %>">
+           <%= bill.invoice_no %>
 
-      <tr>
-        <td>#INV-2033</td>
-        <td>Royal Mart</td>
-        <td>16 Aug 2025</td>
-        <td>₹22,150</td>
-        <td><span class="badge overdue">Overdue</span></td>
-      </tr>
+            </a>
+          </td>
+
+          <td><%= bill.customer_name %></td>
+
+          <td>
+            <%= new Date(bill.created_at).toLocaleDateString('en-IN') %>
+          </td>
+
+          <td>₹<%= bill.grand_total %></td>
+
+          <td>
+            <% if (bill.status === "CANCELLED") { %>
+  <span class="badge pending" style="color: red ;">Cancelled</span>
+<% } else { %>
+  <% if (bill.payment_status === "PAID") { %>
+    <span class="badge paid">Paid</span>
+  <% } else if (bill.payment_status === "PARTIAL") { %>
+    <span class="badge partial">Partial</span>
+  <% } else { %>
+    <span class="badge pending">Due</span>
+  <% } %>
+<% } %>
+
+            
+          </td>
+        </tr>
+      <% }) %>
+
     </table>
   </div>
 
