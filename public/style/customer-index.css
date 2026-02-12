@@ -1,8 +1,8 @@
 /* =========================
-   BILLING DASHBOARD
+   CUSTOMERS DASHBOARD
 ========================= */
 
-.billing {
+.customers-dashboard {
   margin-left: 260px;
 }
 
@@ -10,55 +10,47 @@
    HEADER
 ========================= */
 
-.billing-header {
+.customers-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
 }
 
-.billing-header h1 {
+.customers-header h2 {
   font-size: calc(1.375rem + 1.5vw);
   font-weight: 500;
   color: #111827;
 }
 
-.billing-header span {
+/* =========================
+   CUSTOMER COUNT (Improved)
+========================= */
+
+.customers-count {
   font-size: 0.9rem;
-  color: #6b7280;
+  font-weight: 600;
+  color: #374151;
+  background: #f9fafb;
+  padding: 8px 14px;
+  border-radius: 999px;
+  display: inline-block;
+  margin-bottom: 10px;
 }
 
 /* =========================
-   BUTTON
+   TABLE WRAPPER
 ========================= */
 
-.create {
-  background-color: #1d4ed8;
-  color: #fff;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
-.create:hover {
-  background: #1e40af;
-}
-
-/* =========================
-   BILLING TABLE WRAPPER
-========================= */
-
-.billing-box {
+.customers-box {
   margin-top: 24px;
 }
 
 /* =========================
-   TABLE
+   TABLE (Unified Style)
 ========================= */
 
-.billing-table {
+.customers-table {
   width: 100%;
   border-collapse: collapse;
   background: #ffffff;
@@ -71,11 +63,11 @@
    TABLE HEAD
 ========================= */
 
-.billing-table thead {
+.customers-table thead {
   background: #f9fafb;
 }
 
-.billing-table th {
+.customers-table th {
   padding: 12px 10px;
   text-align: left;
   font-size: 0.85rem;
@@ -90,56 +82,47 @@
    TABLE BODY
 ========================= */
 
-.billing-table td {
+.customers-table td {
   padding: 12px 10px;
   font-size: 0.9rem;
   color: #111827;
   border-bottom: 1px solid #f1f5f9;
 }
 
-.billing-table tbody tr {
+.customers-table tbody tr {
   transition: background 0.2s ease;
 }
 
-.billing-table tbody tr:hover {
+.customers-table tbody tr:hover {
   background: #f9fafb;
 }
 
 /* =========================
-   BADGES (PAYMENT STATUS)
+   FINANCIAL HIGHLIGHTS
 ========================= */
 
-.badge {
-  padding: 6px 12px;
-  border-radius: 999px;
-  font-size: 12px;
+/* Outstanding balance */
+.customers-table td.danger {
   font-weight: 600;
-  text-transform: uppercase;
+  color: #dc2626;
 }
 
-/* PAID */
-.badge.paid {
-  background: #dcfce7;
-  color: #166534;
+/* Paid / positive */
+.customers-table td.success {
+  font-weight: 600;
+  color: #16a34a;
 }
 
-/* PARTIAL */
-.badge.partial {
-  background: #ffedd5;
-  color: #9a3412;
-}
-
-/* DUE */
-.badge.pending {
-  background: #fee2e2;
-  color: #991b1b;
+/* Neutral */
+.customers-table td.neutral {
+  color: #6b7280;
 }
 
 /* =========================
    EMPTY STATE
 ========================= */
 
-.billing-table .empty {
+.customers-table .empty {
   text-align: center;
   font-size: 0.95rem;
   color: #6b7280;
@@ -151,13 +134,18 @@
 ========================= */
 
 @media (max-width: 768px) {
-  .billing-header {
+  .customers-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
   }
 
-  .billing-table {
+  .customers-table {
     font-size: 0.85rem;
+  }
+
+  .customers-count {
+    font-size: 0.8rem;
+    padding: 6px 12px;
   }
 }

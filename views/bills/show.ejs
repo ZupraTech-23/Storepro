@@ -46,12 +46,16 @@
 
 
                 <div class="invoice-print">
+                                               <h2 style="text-align: center;">
+  <%= bill.status === 'CANCELLED' ? 'CANCELLED INVOICE' : bill.bill_type.replace('_', ' ') %>
+</h2>
                                                 <% if (bill.status === 'CANCELLED') { %>
   <div class="invoice-watermark">CANCELLED</div>
 <% } %>
 
                     <!-- ================= FIXED HEADER (REPEATS ON EVERY PAGE) ================= -->
-                    <div class="invoice-header">
+                    <div class="invoice-header" style="border: 1px solid black; padding: 4px;">
+                        
 
                         <!-- LEFT : SELLER -->
                         <div class="header-left">
@@ -63,7 +67,7 @@
                             </p>
                             <p>Ph: <%= seller.phone %>
                             </p>
-                            <p>Email: <%= seller.email %>
+                            <p class="email"> Email: <%= seller.email %>
                             </p>
                             <% if (seller.gstin) { %>
                                 <p><strong>GSTIN:</strong>
@@ -74,9 +78,7 @@
 
                         <!-- CENTER : TITLE -->
                         <div class="header-center">
-                            <h2>
-  <%= bill.status === 'CANCELLED' ? 'CANCELLED INVOICE' : bill.bill_type.replace('_', ' ') %>
-</h2>
+ 
 
                         </div>
 

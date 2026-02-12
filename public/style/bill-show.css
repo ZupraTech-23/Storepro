@@ -137,9 +137,10 @@
 ========================= */
 
 .totals-section {
-    margin-top: 6px;
+    margin-top: 10px;
     display: flex;
     justify-content: flex-end;
+
 }
 
 .totals-table {
@@ -271,36 +272,54 @@ button {
         display: none !important;
     }
 
+    /* 🔥 Force Landscape A4 */
     @page {
-        margin: 6mm;
+        
+        margin: 0;
     }
 
-    body,
+    html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff;
+    }
+
     .show-bill {
         margin: 0 !important;
-        background: #fff;
-        font-size: 13px;
+        padding: 0 !important;
     }
 
+    /* 🔥 Full Landscape Page */
     .invoice-print {
+        width: 100%;          /* Full A4 landscape width */
+        height: fit-content;        /* Full A4 landscape height */
+        padding: 8mm;          /* Inner spacing */
+        margin: 0 auto;
+        box-sizing: border-box;
         box-shadow: none;
-        margin: 0;
-        padding: 14px;
+        border: 0px;
     }
 
-    /* 🔥 HEADER REPEAT */
-    .invoice-header {
-        position: sticky;
-        top: 0;
-        background: #fff;
-        z-index: 10;
+    /* Prevent row break */
+    .items-table tr {
+        page-break-inside: avoid;
     }
 
+    /* Header repeat on next page */
     thead {
         display: table-header-group;
     }
-    
+
     tfoot {
         display: table-footer-group;
     }
+    .email {
+    white-space: nowrap;
 }
+
+   
+    
+
+
+  
+} 

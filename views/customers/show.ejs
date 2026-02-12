@@ -1,0 +1,149 @@
+<% layout('/layouts/boilerplate') %>
+<link rel="stylesheet" href="/style/customer-show.css">
+
+<body>
+  <div class="customer-show">
+
+    <!-- Header -->
+    <div class="customer-header">
+      <div>
+        <h2><%= customer.name %></h2>
+        <p class="customer-meta">
+          Phone: <%= customer.phone || '-' %> <br>
+          Address: <%= customer.address || '-' %> <br>
+          Customer GSTIN : <%= customer.customer_gstin || "N/A" %>
+        </p>
+      </div>
+
+      <div class="customer-actions">
+        <div class="customer-balance 
+          <%= customer.balance > 0 ? 'danger' : 'success' %>">
+          ₹ <%= customer.balance %>
+          <span>Outstanding</span>
+        </div>
+
+        
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <hr class="divider">
+
+    <!-- Ledger -->
+    <h3 class="section-title">Ledger</h3>
+
+    <table class="ledger-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Debit</th>
+          <th>Credit</th>
+          <th>Balance</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% if (ledger.length > 0) { %>
+          <% ledger.forEach(l => { %>
+            <tr>
+              <td>
+                <%= new Date(l.created_at).toLocaleDateString() %><br>
+                <span class="time">
+                  <%= new Date(l.created_at).toLocaleTimeString() %>
+                </span>
+              </td>
+
+              <!-- UPDATED TYPE COLUMN -->
+              <td>
+  <% if (l.ref_type === 'BILL') { %>
+    Bill – <%= l.invoice_no %>
+  <% } else if (l.ref_type === 'PAYMENT') { %>
+    Payment – <%= l.invoice_no %>
+  <% } else if (l.ref_type === 'PAYMENT_REVERSAL') { %>
+    Payment Reversal – <%= l.invoice_no %>
+  <% } else if (l.ref_type === 'BILL_CANCELLED') { %>
+    Bill Cancelled – <%= l.invoice_no %>
+  <% } %>
+</td>
+                
+              <td class="danger">
+                <%= l.debit > 0 ? '₹ ' + l.debit : '-' %>
+              </td>
+
+              <td class="success">
+                <%= l.credit > 0 ? '₹ ' + l.credit : '-' %>
+              </td>
+
+              <td class="balance-col">
+                ₹ <%= l.balance_after %>
+              </td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr>
+            <td colspan="5" class="empty">
+              No ledger entries found
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+      <!-- Invoices -->
+<h3 class="section-title" style="margin-top: 40px;">Invoices</h3>
+
+<table class="ledger-table">
+  <thead>
+    <tr>
+      <th>Invoice</th>
+      <th>Date</th>
+      <th>Total</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% if (invoices.length > 0) { %>
+      <% invoices.forEach(inv => { %>
+        <tr style="cursor: pointer;" data-status="<%= inv.payment_status %>" data-id="<%= inv.id %>" onclick="handleInvoiceClick(this)">
+          <td><%= inv.invoice_no %></td>
+          <td><%= new Date(inv.created_at).toLocaleDateString() %></td>
+          <td>₹ <%= inv.grand_total %></td>
+          <td>
+  <% if (inv.payment_status === 'CANCELLED') { %>
+    <span class="badge pending" style="color:red;">Cancelled</span>
+  <% } else if (inv.payment_status === 'PAID') { %>
+    <span class="badge paid">Paid</span>
+  <% } else if (inv.payment_status === 'PARTIAL') { %>
+    <span class="badge partial">Partial</span>
+  <% } else { %>
+    <span class="badge pending">Due</span>
+  <% } %>
+</td>
+<td>View/Pay</td>
+        </tr>
+      <% }) %>
+    <% } else { %>
+      <tr>
+        <td colspan="4" class="empty">No invoices found</td>
+      </tr>
+    <% } %>
+  </tbody>
+
+<script>
+function handleInvoiceClick(row) {
+  const status = row.getAttribute('data-status');
+  const id = row.getAttribute('data-id');
+  const customerId = '<%= customer.id %>';
+  if (status === 'CANCELLED') {
+    window.location.href = `/bills/${id}`;
+  } else {
+    window.location.href = `/bills/${id}/payments?returnTo=/customers/${customerId}`;
+  }
+}
+</script>
+</table>
+
+  </div>
+</body>

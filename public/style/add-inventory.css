@@ -1,9 +1,6 @@
 /* ===== PAGE WRAPPER ===== */
 .inventory-dashboard {
-  min-height: 100vh;
-  /* padding: 40px 20px 80px; */
-  /* background: linear-gradient(180deg, #f8fafc, #eef2ff); */
-  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+margin-left: 260px;
   
 }
 
