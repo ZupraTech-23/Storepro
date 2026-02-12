@@ -1,0 +1,49 @@
+<% layout('/layouts/boilerplate') %>
+<link rel="stylesheet" href="/style/customer-index.css">
+
+
+  <div class="customers-dashboard">
+
+    <!-- Header -->
+    <div class="customers-header">
+      <h2>Customers</h2>
+    </div>
+
+    <!-- Count -->
+    <div class="customers-count">
+      <span>Total Customers: <%= customers.length %></span>
+    </div>
+
+    <!-- Table -->
+    <table class="customers-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Outstanding</th>
+          <th>Last Activity</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% if (customers && customers.length > 0) { %>
+          <% customers.forEach(c => { %>
+            <tr style="cursor: pointer;" onclick="window.location.href='/customers/<%= c.id %>'">
+              <td><%= c.name %></td>
+              <td><%= c.phone || '-' %></td>
+              <td class="<%= c.balance > 0 ? 'danger' : 'success' %>">₹ <%= c.balance %></td>
+              <td><%= c.last_activity ? new Date(c.last_activity).toLocaleDateString() : '-' %></td>
+              <td>View</td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr>
+            <td colspan="4" class="empty">No customers found</td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+
+  </div>
+

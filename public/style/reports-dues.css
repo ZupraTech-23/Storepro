@@ -1,0 +1,203 @@
+/* ===============================
+   DUE / OUTSTANDING REPORT
+   =============================== */
+
+.dues-main {
+  
+  margin-left: 260px;
+}
+
+/* ===== Header ===== */
+.dues-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.dues-header h2 {
+  
+  
+  font-size: calc(1.375rem + 1.5vw);
+  font-weight: 500;
+  color: #111827;
+}
+
+
+/* ===== Header Actions ===== */
+.header-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+/* ===== Back Button ===== */
+.back-btn {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #374151;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+}
+
+.back-btn:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+  transform: translateY(-1px);
+}
+
+/* ===== Print Button ===== */
+.print-btn {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  background: #16a34a;
+  color: #ffffff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.print-btn:hover {
+  background: #15803d;
+  transform: translateY(-1px);
+}
+
+/* ===== Summary Cards ===== */
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  margin-bottom: 26px;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f1f5f9;
+}
+
+.card .label {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.card .value {
+  font-size: 22px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.card.highlight {
+  background: linear-gradient(135deg, #fff7ed, #fffbeb);
+}
+
+/* ===== Table ===== */
+.report-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+}
+
+.report-table th {
+  background: #f9fafb;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #374151;
+}
+
+.report-table th,
+.report-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.report-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* ===== Clickable Rows ===== */
+.row-click {
+  cursor: pointer;
+}
+
+.row-click:hover {
+  background: #fff7ed;
+}
+
+/* ===== Amount Styling ===== */
+.due-amount {
+  font-weight: 600;
+  color: #b91c1c;
+}
+
+.customer-name {
+  font-weight: 500;
+}
+
+/* ===== Alignment ===== */
+.right {
+  text-align: right;
+}
+
+/* ===== Empty Text ===== */
+.text-muted {
+  color: #6b7280;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+/* ===== Print ===== */
+@media print {
+  /* Hide buttons */
+  .dues-main .print-btn,
+  .dues-main .back-btn {
+    display: none;
+  }
+
+  /* Remove shadows for print */
+  .dues-main .card,
+  .dues-main .report-table {
+    box-shadow: none;
+    border: 1px solid #d1d5db;
+  }
+
+  /* Only affect dues report table */
+  .dues-main .report-table {
+    width: 100% !important;
+    table-layout: fixed !important;
+    border-collapse: collapse;
+  }
+
+  .dues-main .report-table th,
+  .dues-main .report-table td {
+    font-size: 11px !important;
+    padding: 6px !important;
+    word-wrap: break-word;
+    white-space: normal !important;
+  }
+
+  /* Prevent wrapping of numbers */
+  .dues-main .right {
+    white-space: nowrap;
+  }
+}
+

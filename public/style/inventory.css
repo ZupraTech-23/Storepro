@@ -1,10 +1,15 @@
-/* ===== Inventory Dashboard ===== */
+/* =========================
+   INVENTORY DASHBOARD
+========================= */
+
 .inventory-dashboard {
-  
   margin-left: 260px;
 }
 
-/* ===== Header ===== */
+/* =========================
+   HEADER
+========================= */
+
 .inventory-header {
   display: flex;
   justify-content: space-between;
@@ -13,12 +18,21 @@
 }
 
 .inventory-header h2 {
-  
   font-size: calc(1.375rem + 1.5vw);
   font-weight: 500;
   color: #111827;
 }
-.add-inventory{
+
+.inventory-header span {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+/* =========================
+   BUTTON (Match Billing)
+========================= */
+
+.add-inventory {
   background-color: #1d4ed8;
   color: #fff;
   border: none;
@@ -27,12 +41,23 @@
   cursor: pointer;
   font-size: 0.9rem;
 }
-.inventory-header span {
-  font-size: 0.9rem;
-  color: #6b7280;
+
+.add-inventory:hover {
+  background: #1e40af;
 }
 
-/* ===== Table ===== */
+/* =========================
+   TABLE WRAPPER
+========================= */
+
+.inventory-box {
+  margin-top: 24px;
+}
+
+/* =========================
+   TABLE (Unified Style)
+========================= */
+
 .inventory-table {
   width: 100%;
   border-collapse: collapse;
@@ -40,15 +65,18 @@
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
-  
 }
 
-/* ===== Table Head ===== */
+/* =========================
+   TABLE HEAD
+========================= */
+
 .inventory-table thead {
   background: #f9fafb;
 }
 
 .inventory-table th {
+  padding: 12px 10px;
   text-align: left;
   font-size: 0.85rem;
   font-weight: 600;
@@ -58,14 +86,17 @@
   border-bottom: 1px solid #e5e7eb;
 }
 
-/* ===== Table Body ===== */
+/* =========================
+   TABLE BODY
+========================= */
+
 .inventory-table td {
+  padding: 12px 10px;
   font-size: 0.9rem;
   color: #111827;
   border-bottom: 1px solid #f1f5f9;
 }
 
-/* ===== Rows ===== */
 .inventory-table tbody tr {
   transition: background 0.2s ease;
 }
@@ -74,19 +105,57 @@
   background: #f9fafb;
 }
 
-/* ===== Stock Highlight ===== */
+/* =========================
+   COLUMN EMPHASIS
+========================= */
+
+/* Stock column highlight */
 .inventory-table td:nth-child(6) {
   font-weight: 600;
 }
 
-/* ===== Price Columns ===== */
+/* Price columns */
 .inventory-table td:nth-child(4),
 .inventory-table td:nth-child(5) {
   font-weight: 500;
   color: #1f2937;
 }
 
-/* ===== Empty State ===== */
+/* =========================
+   STOCK BADGES (NEW)
+   Matches billing badge style
+========================= */
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* In Stock */
+.badge.in-stock {
+  background: #dcfce7;
+  color: #166534;
+}
+
+/* Low Stock */
+.badge.low-stock {
+  background: #ffedd5;
+  color: #9a3412;
+}
+
+/* Out of Stock */
+.badge.out-stock {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+
 .inventory-table .empty {
   text-align: center;
   font-size: 0.95rem;
@@ -94,7 +163,10 @@
   padding: 30px 0;
 }
 
-/* ===== Responsive ===== */
+/* =========================
+   RESPONSIVE
+========================= */
+
 @media (max-width: 768px) {
   .inventory-header {
     flex-direction: column;

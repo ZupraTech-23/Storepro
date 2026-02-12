@@ -279,4 +279,44 @@ document.addEventListener("change", function (e) {
 billTypeSelect.addEventListener("change", handleBillTypeUI);
 document.addEventListener("DOMContentLoaded", handleBillTypeUI);
 
+const phoneInput = document.getElementById("customer_phone");
+const nameInput = document.getElementById("customer_name");
+const addressInput = document.getElementById("customer_address");
+const gstinInput = document.getElementById("customer_gstin");
+const hint = document.getElementById("customerHint");
+
+let searchTimer;
+
+phoneInput.addEventListener("input", () => {
+  clearTimeout(searchTimer);
+
+  const phone = phoneInput.value.trim();
+
+  // Reset if phone too short
+  if (phone.length < 5) {
+    hint.classList.add("d-none");
+    return;
+  }
+
+  searchTimer = setTimeout(async () => {
+    try {
+      const res = await fetch(`/customers/search?phone=${phone}`);
+      const customer = await res.json();
+
+      if (customer) {
+        nameInput.value = customer.name || "";
+        addressInput.value = customer.address || "";
+        gstinInput.value = customer.gstin || "";
+
+        hint.classList.remove("d-none");
+      } else {
+        hint.classList.add("d-none");
+      }
+    } catch (err) {
+      console.error("Customer lookup failed", err);
+    }
+  }, 400); // debounce
+});
+
+
 

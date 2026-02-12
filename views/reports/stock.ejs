@@ -1,0 +1,78 @@
+<% layout('/layouts/boilerplate') %>
+<link rel="stylesheet" href="/style/reports-stock.css">
+
+<div class="stock-main">
+  <div class="print-header">
+  <div class="shop-name"><%= shopName %></div>
+  </div>
+  <!-- Header -->
+  <div class="stock-header">
+    <h2>Stock / Inventory Report</h2>
+    <div class="header-actions">
+      <div class="print-meta">
+    Period: <%= from %> to <%= to %><br>
+    Generated on: <%= new Date().toLocaleString() %>
+  </div>
+      <div class="button-group">
+        <button type="button" onclick="window.history.back()" class="back-btn">
+          ← Back
+        </button>
+        <button type="button" onclick="window.print()" class="print-btn">
+          Print
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary">
+    <div class="card">
+      <div class="label">Total Items</div>
+      <div class="value"><%= summary.total_items %></div>
+    </div>
+
+    <div class="card">
+      <div class="label">Total Stock Qty</div>
+      <div class="value"><%= summary.total_stock %></div>
+    </div>
+
+    <div class="card highlight">
+      <div class="label">Stock Value</div>
+      <div class="value">₹ <%= summary.total_stock_value.toFixed(2) %></div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Category</th>
+        <th>Brand</th>
+        <th>Condition</th>
+        <th class="right">Purchase</th>
+        <th class="right">Selling</th>
+        <th class="right">Stock</th>
+        <th class="right">Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% items.forEach(i => { %>
+        <tr>
+          <td class="item-name"><%= i.name %></td>
+          <td><%= i.category %></td>
+          <td><%= i.brand || '-' %></td>
+          <td>
+            <span class="badge <%= i.item_condition %>">
+              <%= i.item_condition.replace('_',' ') %>
+            </span>
+          </td>
+          <td class="right">₹ <%= i.purchase_price %></td>
+          <td class="right">₹ <%= i.selling_price %></td>
+          <td class="right stock"><%= i.stock %></td>
+          <td class="right value">₹ <%= i.stock_value %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>

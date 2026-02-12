@@ -1,0 +1,274 @@
+/* =========================
+   CUSTOMER SHOW PAGE
+========================= */
+
+.customer-show {
+  margin-left: 260px;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.customer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 22px;
+}
+
+.customer-header h2 {
+  font-size: calc(1.375rem + 1.2vw);
+  font-weight: 500;
+  color: #111827;
+}
+
+.customer-meta {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-top: 6px;
+}
+
+/* =========================
+   BADGES
+========================= */
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge.success { background: #dcfce7; color: #166534; }
+.badge.warning { background: #fef3c7; color: #92400e; }
+.badge.danger  { background: #fee2e2; color: #991b1b; }
+
+/* =========================
+   HEADER ACTIONS
+========================= */
+
+.customer-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+/* Buttons (Unified with app) */
+.btn-primary,
+.btn-secondary {
+  text-decoration: none;
+  font-size: 0.85rem;
+  padding: 9px 16px;
+  border-radius: 10px;
+  font-weight: 500;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.btn-primary {
+  background: #1d4ed8;
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background: #1e40af;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.btn-secondary:hover {
+  background: #e5e7eb;
+  transform: translateY(-1px);
+}
+
+/* =========================
+   BALANCE CARD
+========================= */
+
+.customer-balance {
+  text-align: right;
+  padding: 16px 20px;
+  border-radius: 12px;
+  font-size: 1.35rem;   /* increased */
+  font-weight: 700;
+  min-width: 170px;
+}
+
+.customer-balance span {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-top: 4px;
+  letter-spacing: 0.05em;
+}
+
+.customer-balance.danger {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.customer-balance.success {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+/* =========================
+   DIVIDER
+========================= */
+
+.divider {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 24px 0;
+}
+
+/* =========================
+   SECTION TITLE
+========================= */
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #111827;
+}
+
+/* =========================
+   LEDGER TABLE
+========================= */
+
+.ledger-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+}
+
+.ledger-table thead {
+  background: #f9fafb;
+}
+
+.ledger-table th {
+  padding: 12px 10px;
+  text-align: left;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.ledger-table td {
+  padding: 12px 10px;
+  font-size: 0.9rem;
+  color: #111827;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.ledger-table tbody tr {
+  transition: background 0.2s ease;
+}
+
+.ledger-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+/* =========================
+   AMOUNT COLORS
+========================= */
+
+.ledger-table td.danger {
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.ledger-table td.success {
+  color: #16a34a;
+  font-weight: 500;
+}
+
+.balance-col {
+  font-weight: 600;
+}
+
+/* =========================
+   LINKS INSIDE TABLE
+========================= */
+
+.ledger-table a {
+  color: #1d4ed8;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.ledger-table a:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   DATE & TIME
+========================= */
+
+.time {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+
+.empty {
+  text-align: center;
+  font-size: 0.95rem;
+  color: #6b7280;
+  padding: 30px 0;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+  .customer-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .customer-actions {
+    align-items: flex-start;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    text-align: center;
+  }
+
+  .customer-balance {
+    text-align: left;
+  }
+
+  .ledger-table {
+    font-size: 0.85rem;
+  }
+}

@@ -3,64 +3,71 @@
 
 <div class="billing">
 
+  <!-- ===== Header ===== -->
   <div class="billing-header">
-    <h1>Billing</h1>
+    <div>
+      <h1>Billing</h1>
+      <span>All invoices & payment status</span>
+    </div>
+
     <a href="/bills/new">
       <button class="create">+ Create Invoice</button>
     </a>
   </div>
 
+  <!-- ===== Table ===== -->
   <div class="billing-box">
-    <table>
-      <tr>
-        <th>Invoice</th>
-        <th>Customer</th>
-        <th>Date</th>
-        <th>Amount</th>
-        <th>Status</th>
-      </tr>
-
-      <% if (!bills.length) { %>
+    <table class="billing-table">
+      <thead>
         <tr>
-          <td colspan="5" style="text-align:center;">No invoices found</td>
+          <th>Invoice</th>
+          <th>Customer</th>
+          <th>Date</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Action</th>
         </tr>
-      <% } %>
+      </thead>
 
-      <% bills.forEach(bill => { %>
-        <tr>
-          <td>
-            <a style="color: black;" href="/bills/<%= bill.id %>">
-           <%= bill.invoice_no %>
+      <tbody>
+        <% if (!bills.length) { %>
+          <tr>
+            <td colspan="5" class="empty">No invoices found</td>
+          </tr>
+        <% } %>
 
-            </a>
-          </td>
+        <% bills.forEach(bill => { %>
+          <tr style="cursor: pointer;" onclick="window.location.href='/bills/<%= bill.id %>'">
+            <td style="font-weight:500;">
+              <%= bill.invoice_no %>
+            </td>
 
-          <td><%= bill.customer_name %></td>
+            <td><%= bill.customer_name %></td>
 
-          <td>
-            <%= new Date(bill.created_at).toLocaleDateString('en-IN') %>
-          </td>
+            <td>
+              <%= new Date(bill.created_at).toLocaleDateString('en-IN') %>
+            </td>
 
-          <td>₹<%= bill.grand_total %></td>
+            <td style="font-weight:500;">
+              ₹<%= bill.grand_total %>
+            </td>
 
-          <td>
-            <% if (bill.status === "CANCELLED") { %>
-  <span class="badge pending" style="color: red ;">Cancelled</span>
-<% } else { %>
-  <% if (bill.payment_status === "PAID") { %>
-    <span class="badge paid">Paid</span>
-  <% } else if (bill.payment_status === "PARTIAL") { %>
-    <span class="badge partial">Partial</span>
-  <% } else { %>
-    <span class="badge pending">Due</span>
-  <% } %>
-<% } %>
+            <td>
+              <% if (bill.status === "CANCELLED") { %>
+                <span class="badge pending">Cancelled</span>
+              <% } else if (bill.payment_status === "PAID") { %>
+                <span class="badge paid">Paid</span>
+              <% } else if (bill.payment_status === "PARTIAL") { %>
+                <span class="badge partial">Partial</span>
+              <% } else { %>
+                <span class="badge pending">Due</span>
+              <% } %>
+            </td>
 
-            
-          </td>
-        </tr>
-      <% }) %>
-
+            <td>View</td>
+          </tr>
+        <% }) %>
+      </tbody>
     </table>
   </div>
 

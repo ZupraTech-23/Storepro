@@ -1,0 +1,54 @@
+/* ===============================
+   REPORTS HUB
+   =============================== */
+
+.reports-main {
+  margin-left: 260px;
+  
+  
+}
+
+.reports-main h2 {
+
+  
+  font-size: calc(1.375rem + 1.5vw);
+  font-weight: 500;
+  color: #111827;
+}
+
+
+/* Grid */
+.reports-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+/* Card */
+.report-card {
+  display: block;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  text-decoration: none;
+  color: #111827;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 10px 25px rgba(0,0,0,.06);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.report-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px rgba(0,0,0,.08);
+}
+
+.report-card .title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.report-card .desc {
+  font-size: 14px;
+  color: #6b7280;
+}

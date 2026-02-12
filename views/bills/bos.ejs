@@ -6,36 +6,37 @@
 <div class="bos-page">
   <div class="top ">
 
-  <!-- PAYMENTS (always visible) -->
- <% if (bill.status === 'CANCELLED') { %>
-  <div class="cancel-banner">
-    ❌ THIS BILL HAS BEEN CANCELLED — DO NOT USE
-  </div>
- <%  }%>
- 
+    <!-- PAYMENTS (always visible) -->
+        <% if (bill.status === 'CANCELLED') { %>
+          <div class="cancel-banner">
+            ❌ THIS BILL HAS BEEN CANCELLED — DO NOT USE
+          </div>
+        <%  }%>
+        
    
-<% if (bill.status !== 'CANCELLED') { %>
+    <% if (bill.status !== 'CANCELLED') { %>
      <a href="/bills/<%= bill.id %>/payments">
     <button class="print-btn">Payments</button>
-  </a>
+    </a>
     <a href="/bills/<%= bill.id %>/edit">
       <button class="print-btn">Edit</button>
     </a>
   
-  <form method="POST" action="/bills/<%= bill.id %>/cancel">
+    <form method="POST" action="/bills/<%= bill.id %>/cancel">
     <button type="submit" class="print-btn">Cancel Bill</button>
-  </form>
+      </form>
     <button   onclick="window.print()" class="print-btn">🖨 Print Invoice</button>
   
 
     <% } %>
 
 
-  <!-- EDIT & CANCEL (only if unpaid & active) -->
+    <!-- EDIT & CANCEL (only if unpaid & active) -->
  
-  <!-- PRINT -->
+    <!-- PRINT -->
 
-</div>
+  </div>
+  
 
   <div class="bos-container">
                                                        <% if (bill.status === 'CANCELLED') { %>
@@ -72,6 +73,11 @@
           <span class="label">Phone:</span>
           <span class="value"><%= seller.phone || "-" %></span>
         </div>
+        <div class="row">
+          <span class="label">Email:</span>
+          <span class="value"><%= seller.email || "-" %></span>
+        </div>
+
         <div class="row">
           <span class="label">GSTIN:</span>
           <span class="value"><%= seller.gstin|| "-" %></span>
@@ -171,16 +177,14 @@
       in lieu of a tax invoice as per GST law.
     </div>
 
-    <!-- ================= FOOTER ================= -->
+
+        <!-- ================= FOOTER ================= -->
     <div class="footer-note">
       This is a computer generated bill. No signature required.
     </div>
 
-  </div>
-  
+  </div> <!-- END bos-container -->
 
+</div> <!-- END bos-page -->
 
- 
-
-  
-</div>
+   

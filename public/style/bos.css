@@ -4,10 +4,16 @@
 
 .bos-page {
     
-    padding: 14px;
-    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    
     margin-left: 260px;
-    line-height: 1.2; /* 🔥 MATCH TAX INVOICE */
+    line-height: 1.2;
+    margin-top: -12px !important;
+
+    
+}
+@page {
+
+    margin: 0;
 }
 .repeat-line th {
     font-size: 11px;
@@ -284,6 +290,7 @@
         margin-left: 0 !important;
         padding: 0;
         background: #fff;
+        
     }
 
     body {
@@ -292,8 +299,8 @@
     }
 
     .bos-container {
-        border: none;
-        padding: 0;
+        
+        border: 0px;
     }
 
     /* Repeat table headers */

@@ -1,0 +1,61 @@
+<% layout('/layouts/boilerplate') %>
+<link rel="stylesheet" href="/style/reports-gst-summary.css">
+
+<div class="gst-main">
+  <div class="print-header">
+  <div class="shop-name"><%= shopName %></div>
+  </div>
+  <div class="gst-header">
+    <h2>GST Summary</h2>
+    <div class="header-actions">
+      <div class="print-meta">
+    Period: <%= from %> to <%= to %><br>
+    Generated on: <%= new Date().toLocaleString() %>
+  </div>
+      <div class="button-group">
+        <button type="button" onclick="window.history.back()" class="back-btn">
+          ← Back
+        </button>
+        <button type="button" onclick="window.print()" class="print-btn">
+          Print
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter -->
+  <form method="GET" class="filter-bar">
+    <input type="date" name="from" value="<%= from %>" required>
+    <span class="to-text">to</span>
+    <input type="date" name="to" value="<%= to %>" required>
+    <button type="submit">Generate</button>
+  </form>
+
+  <!-- Summary -->
+  <div class="summary">
+    <div class="card">
+      <div class="label">Taxable Turnover</div>
+      <div class="value">₹ <%= gst.taxable_turnover.toFixed(2) %></div>
+    </div>
+
+    <div class="card">
+      <div class="label">CGST</div>
+      <div class="value">₹ <%= gst.total_cgst.toFixed(2) %></div>
+    </div>
+
+    <div class="card">
+      <div class="label">SGST</div>
+      <div class="value">₹ <%= gst.total_sgst.toFixed(2) %></div>
+    </div>
+
+    <div class="card">
+      <div class="label">IGST</div>
+      <div class="value">₹ <%= gst.total_igst.toFixed(2) %></div>
+    </div>
+
+    <div class="card highlight">
+      <div class="label">Total GST Collected</div>
+      <div class="value">₹ <%= total_gst.toFixed(2) %></div>
+    </div>
+  </div>
+</div>

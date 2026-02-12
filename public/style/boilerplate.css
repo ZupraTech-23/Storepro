@@ -5,8 +5,10 @@
   padding: 0;
   box-sizing: border-box;
   font-family: 'inter', sans-serif;
+  
 
 }
+
 
 body {
   background: #f5f7fb;
@@ -15,4 +17,121 @@ body {
        /* sidebar width */
   padding: 24px 32px;      /* SAME spacing for all pages */
   min-height: 100vh;
+
+
+}
+/* #backBtnWrapper {
+  position: sticky;
+  top: 0;
+  margin-left: 270px;
+  margin-top: 10px;
+  
+  padding-bottom: 4px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+
+  z-index: 99;
+} */
+
+  
+  /* background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); */
+  
+
+.btn-back {
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  padding: 4px 10px;
+  font-size: 13px;
+  border-radius: 6px;
+}
+
+
+.btn-back:hover {
+  background: linear-gradient(135deg, #f3f4f6 0%, #eff2f5 100%);
+  border-color: #d1d5db;
+  color: #111827;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.btn-back:active {
+  transform: translateY(0);
+}
+
+.print-header{
+  display: none;
+}
+
+.print-meta {
+  display: none;
+}
+/* ===============================
+   GLOBAL PRINT FIX
+   =============================== */
+@media print {
+  /* Hide sidebar & top nav */
+  .sidebar,
+  .topbar,
+  .navbar,
+  .header,
+  .print-btn {
+    display: none !important;
+  }
+
+  /* Reset main content spacing */
+ 
+  .print-header {
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .shop-name {
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+
+  .sales-main,
+  .profit-main,
+  .gst-main,
+  .stock-main,
+  .payments-main,
+  .dues-main,
+  .reports-main {
+    margin-left: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Optional: improve print readability */
+  h2 {
+    margin-top: 0;
+  }
+   /* Page setup */
+  /* @page {
+    size: A4 portrait;
+    margin: 12mm;
+  } */
+.print-meta {
+    display: block;
+    font-size: 12px;
+    color: #000;
+    margin: 6px 0 12px 0;
+  }
+  /* Tables fit page */
+  
+
+  
 }

@@ -1,22 +1,61 @@
+/* ===============================
+   SIDEBAR – BIGGER & CLEARER
+   =============================== */
+
 .sidebar {
   width: 260px;
   background: #0f172a;
   color: #fff;
   height: 100vh;
-  padding: 25px;
+  padding: 28px 16px;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 1000;
 }
 
-
-
-.sidebar h2{color:#38bdf8;margin-bottom:40px}
-.sidebar li{
-  list-style:none;padding:14px 16px;border-radius:10px;
-  margin-bottom:10px;cursor:pointer;transition:.3s
+/* Logo */
+.sidebar h2 {
+  color: #38bdf8;
+  font-size: 1.6rem;      /* ⬆ bigger */
+  font-weight: 600;
+  margin-bottom: 36px;   /* ⬆ more gap */
+  padding-left: 10px;
 }
-.sidebar li:hover,.active{background:#1e293b}
 
+/* Reset list */
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
 
+/* Each row spacing */
+.sidebar li {
+  margin-bottom: 14px;   /* ⬆ more vertical gap */
+}
+
+/* FULL WIDTH CLICKABLE LINK */
+.sidebar li a {
+  display: block;
+  width: 100%;           /* 🔥 full sidebar width */
+  padding: 18px 20px;    /* ⬆ taller buttons */
+  font-size: 16px;       /* ⬆ bigger text */
+  font-weight: 500;
+  border-radius: 14px;
+  color: #e5e7eb;
+  text-decoration: none;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+/* Hover */
+.sidebar li a:hover {
+  background: #1e293b;
+  color: #ffffff;
+}
+
+/* Active */
+.sidebar li a.active {
+  background: #1e293b;
+  color: #38bdf8;
+}
