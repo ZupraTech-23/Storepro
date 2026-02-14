@@ -171,31 +171,19 @@
     const form = document.querySelector('.payment-form');
     if (!form || !form.contains(document.activeElement)) return;
 
-    const allInputs = Array.from(form.querySelectorAll('input, select, button, textarea')).filter(el => {
-      return el.offsetParent !== null && el.type !== 'hidden';
-    });
-
-    const currentIndex = allInputs.indexOf(document.activeElement);
-
-    if (e.key === 'ArrowDown' || e.key === 'Enter') {
+    // Only handle Enter key
+    if (e.key === 'Enter') {
       e.preventDefault();
+      
+      const allInputs = Array.from(form.querySelectorAll('input, select, button, textarea')).filter(el => {
+        return el.offsetParent !== null && el.type !== 'hidden';
+      });
+
+      const currentIndex = allInputs.indexOf(document.activeElement);
+      
+      // Move to next field
       if (currentIndex < allInputs.length - 1) {
         allInputs[currentIndex + 1].focus();
-      }
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      if (currentIndex > 0) {
-        allInputs[currentIndex - 1].focus();
-      }
-    } else if (e.key === 'ArrowRight') {
-      e.preventDefault();
-      if (currentIndex < allInputs.length - 1) {
-        allInputs[currentIndex + 1].focus();
-      }
-    } else if (e.key === 'ArrowLeft') {
-      e.preventDefault();
-      if (currentIndex > 0) {
-        allInputs[currentIndex - 1].focus();
       }
     }
   });
