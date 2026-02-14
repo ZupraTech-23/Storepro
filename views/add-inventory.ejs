@@ -85,7 +85,7 @@
 
       <!-- ACTIONS -->
       <div class="form-actions">
-        <button type="submit" class="btn primary">Add Item</button>
+        <button type="submit" id="inventorySubmitBtn" class="btn primary">Add Item</button>
         <a href="/inventory" class="btn secondary">Cancel</a>
       </div>
 
@@ -94,6 +94,17 @@
   </div>
 </div>
 
+<script>
+  document.querySelector('.inventory-form').addEventListener('submit', function(e) {
+    const submitBtn = document.getElementById('inventorySubmitBtn');
+    if (submitBtn.disabled) {
+      e.preventDefault();
+      return false;
+    }
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Adding...';
+  });
+</script>
 
 <script src="/js/script.js"></script>
 <script src="/js/suggestion.js"></script>

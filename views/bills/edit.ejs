@@ -5,7 +5,7 @@
 
 <h2>Edit Bill</h2>
 
-<form method="POST" action="/bills/<%= bill.id %>/update" class="bill-form">
+<form method="POST" action="/bills/<%= bill.id %>/update" class="bill-form" autocomplete="off">
 
   <!-- =========================
        BILL TYPE
@@ -211,7 +211,7 @@
 
   <hr>
 
-  <button type="submit">Update Bill</button>
+  <button type="submit" id="submitBtn">Update Bill</button>
 </form>
 
 <!-- =========================
@@ -219,6 +219,18 @@
 ========================== -->
 <script>
   let rowIndex = <%= items.length %>;
+  
+  // Prevent double submission
+  document.querySelector('.bill-form').addEventListener('submit', function(e) {
+    const submitBtn = document.getElementById('submitBtn');
+    if (submitBtn.disabled) {
+      e.preventDefault();
+      return false;
+    }
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Updating...';
+  });
+
   function addRow() {
     const tbody = document.querySelector("#itemsTable tbody");
     const firstRow = tbody.rows[0];
@@ -335,6 +347,91 @@ document.addEventListener("DOMContentLoaded", () => {
     if (typeof calculateRow === "function") calculateRow(row);
   });
   if (typeof calculateTotals === "function") calculateTotals();
+});
+
+// Keyboard navigation for form fields
+document.addEventListener("keydown", function(e) {
+  const form = document.querySelector('.bill-form');
+  if (!form || !form.contains(document.activeElement)) return;
+
+  const allInputs = Array.from(form.querySelectorAll('input, select, button, textarea')).filter(el => {
+    return el.offsetParent !== null && el.type !== 'hidden';
+  });
+
+  const currentIndex = allInputs.indexOf(document.activeElement);
+  let nextIndex = -1;
+
+  if (e.key === 'ArrowDown' || e.key === 'Enter') {
+    e.preventDefault();
+    // Move down: next field in a row or next row
+    const currentRow = document.activeElement.closest('tr');
+    if (currentRow) {
+      const nextRow = currentRow.nextElementSibling;
+      if (nextRow) {
+        const cellIndex = Array.from(currentRow.cells).indexOf(document.activeElement.closest('td'));
+        const input = nextRow.cells[cellIndex]?.querySelector('input, select');
+        if (input) input.focus();
+      }
+    } else {
+      // Not in a table, just move to next input
+      if (currentIndex < allInputs.length - 1) {
+        allInputs[currentIndex + 1].focus();
+      }
+    }
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    // Move up: previous field in a row or previous row
+    const currentRow = document.activeElement.closest('tr');
+    if (currentRow) {
+      const prevRow = currentRow.previousElementSibling;
+      if (prevRow) {
+        const cellIndex = Array.from(currentRow.cells).indexOf(document.activeElement.closest('td'));
+        const input = prevRow.cells[cellIndex]?.querySelector('input, select');
+        if (input) input.focus();
+      }
+    } else {
+      // Not in a table, just move to previous input
+      if (currentIndex > 0) {
+        allInputs[currentIndex - 1].focus();
+      }
+    }
+  } else if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    // Move right: next field in the same row
+    const currentRow = document.activeElement.closest('tr');
+    if (currentRow) {
+      const currentCell = document.activeElement.closest('td');
+      const cellIndex = Array.from(currentRow.cells).indexOf(currentCell);
+      const nextCell = currentRow.cells[cellIndex + 1];
+      if (nextCell) {
+        const input = nextCell.querySelector('input, select');
+        if (input) input.focus();
+      }
+    } else {
+      // Not in a table, move to next input
+      if (currentIndex < allInputs.length - 1) {
+        allInputs[currentIndex + 1].focus();
+      }
+    }
+  } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    // Move left: previous field in the same row
+    const currentRow = document.activeElement.closest('tr');
+    if (currentRow) {
+      const currentCell = document.activeElement.closest('td');
+      const cellIndex = Array.from(currentRow.cells).indexOf(currentCell);
+      if (cellIndex > 0) {
+        const prevCell = currentRow.cells[cellIndex - 1];
+        const input = prevCell.querySelector('input, select');
+        if (input) input.focus();
+      }
+    } else {
+      // Not in a table, move to previous input
+      if (currentIndex > 0) {
+        allInputs[currentIndex - 1].focus();
+      }
+    }
+  }
 });
 </script>
 

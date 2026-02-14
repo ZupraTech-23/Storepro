@@ -96,11 +96,15 @@ app.get("/dashboard", async (req, res) => {
     `);
 
     // Today Collection
-    const [todayCollection] = await connection.query(`
-      SELECT IFNULL(SUM(credit),0) AS total
-      FROM customer_ledger
-      WHERE DATE(created_at)=CURDATE()
-    `);
+    // Today Collection (exclude cancelled bills)
+const [todayCollection] = await connection.query(`
+  SELECT IFNULL(SUM(cl.credit),0) AS total
+  FROM customer_ledger cl
+  JOIN bills b ON b.id = cl.bill_id
+  WHERE DATE(cl.created_at)=CURDATE()
+  AND b.status='ACTIVE'
+`);
+
 
     // Total Receivable
     const [totalReceivable] = await connection.query(`
@@ -156,20 +160,44 @@ app.get("/", (req, res) => {
   res.send("working")
 })
 app.get("/billing", async (req, res) => {
+  const { search, date } = req.query;
 
-  const [bills] = await connection.query(`
+  let query = `
     SELECT 
       b.*,
       IFNULL(SUM(p.amount), 0) AS paid_amount
     FROM bills b
     LEFT JOIN payments p ON p.bill_id = b.id
+    WHERE 1=1
+  `;
+
+  const params = [];
+
+  // Only use DB filtering if date is provided
+  // (search alone will be handled by JS on the client)
+  if (date) {
+    query += ` AND DATE(b.created_at) = ?`;
+    params.push(date);
+    
+    // If both search and date are provided, filter by both in DB
+    if (search && search.trim()) {
+      query += ` AND LOWER(b.customer_name) LIKE LOWER(?)`;
+      params.push(`%${search.trim()}%`);
+    }
+  }
+
+  query += `
     GROUP BY b.id
     ORDER BY b.created_at DESC
-  `);
+  `;
+
+  const [bills] = await connection.query(query, params);
 
   // derive payment status
   bills.forEach(b => {
-    if (b.paid_amount >= b.grand_total) {
+    if (b.status === 'CANCELLED') {
+      b.payment_status = 'CANCELLED';
+    } else if (b.paid_amount >= b.grand_total) {
       b.payment_status = "PAID";
     } else if (b.paid_amount > 0) {
       b.payment_status = "PARTIAL";
@@ -178,7 +206,11 @@ app.get("/billing", async (req, res) => {
     }
   });
 
-  res.render("billing", { bills });
+  res.render("billing", { 
+    bills,
+    search: search || '',
+    dateFilter: date || ''
+  });
 });
 
 app.get(
@@ -382,9 +414,15 @@ app.get("/bills/new", WrapAsync(async (req, res, next) => {
 
 }));
 
+let isCreatingBill = false;
 
 
 app.post("/bills/create", WrapAsync(async (req, res) => {
+    if (isCreatingBill) {
+    return res.status(429).send("Bill is already being created. Please wait...");
+  }
+
+  isCreatingBill = true;
 
   const conn = await connection.getConnection();
 
@@ -565,9 +603,13 @@ await conn.query(
 
   } catch (err) {
     await conn.rollback();
+     if (err.code === "ER_DUP_ENTRY") {
+    return res.status(400).send("Duplicate invoice detected.");
+  }
     console.error(err);
     res.status(500).send(err.message);
   } finally {
+     isCreatingBill = false;  
     conn.release();
   }
 }));
@@ -1047,33 +1089,25 @@ app.post("/bills/:id/cancel", WrapAsync(async (req, res) => {
   try {
     await conn.beginTransaction();
 
-    /* =========================
-       1️⃣ FETCH BILL
-    ========================== */
+    /* 1️⃣ Fetch Bill */
     const [[bill]] = await conn.query(
       "SELECT * FROM bills WHERE id = ?",
       [id]
     );
 
     if (!bill) throw new Error("Bill not found");
-    if (bill.status === "CANCELLED") {
-      throw new Error("Bill already cancelled");
-    }
+    if (bill.status === "CANCELLED") throw new Error("Already cancelled");
 
     const customerId = bill.customer_id;
     const billAmount = Number(bill.grand_total);
 
-    /* =========================
-       2️⃣ FETCH PAYMENTS
-    ========================== */
+    /* 2️⃣ Fetch Payments */
     const [payments] = await conn.query(
       "SELECT * FROM payments WHERE bill_id = ?",
       [id]
     );
 
-    /* =========================
-       3️⃣ FETCH CUSTOMER BALANCE
-    ========================== */
+    /* 3️⃣ Get current balance */
     const [[cust]] = await conn.query(
       "SELECT balance FROM customers WHERE id = ?",
       [customerId]
@@ -1082,61 +1116,36 @@ app.post("/bills/:id/cancel", WrapAsync(async (req, res) => {
     let balance = Number(cust.balance);
 
     /* =========================
-       4️⃣ REVERSE BILL DEBIT
+       4️⃣ Reverse BILL (credit)
     ========================== */
     balance -= billAmount;
 
-    await conn.query(
-      `
+    await conn.query(`
       INSERT INTO customer_ledger
-      (customer_id, ref_type, ref_id, credit, balance_after)
-      VALUES (?, 'BILL_CANCELLED', ?, ?, ?)
-      `,
-      [customerId, bill.id, billAmount, balance]
-    );
+      (customer_id, ref_type, ref_id, bill_id, credit, balance_after)
+      VALUES (?, 'BILL_CANCELLED', ?, ?, ?, ?)
+    `, [customerId, bill.id, bill.id, billAmount, balance]);
 
     /* =========================
-       5️⃣ REVERSE EACH PAYMENT
+       5️⃣ Reverse PAYMENTS (debit)
     ========================== */
     for (const p of payments) {
       balance += Number(p.amount);
 
-      await conn.query(
-  `
-  INSERT INTO customer_ledger
-  (customer_id, ref_type, ref_id, bill_id, credit, balance_after)
-  VALUES (?, 'BILL_CANCELLED', ?, ?, ?, ?)
-  `,
-  [
-    customerId,
-    bill.id,     // ref_id → bill id
-    bill.id,     // bill_id ✅
-    billAmount,  // credit amount
-    balance
-  ]
-);
-
+      await conn.query(`
+        INSERT INTO customer_ledger
+        (customer_id, ref_type, ref_id, bill_id, debit, balance_after)
+        VALUES (?, 'PAYMENT_REVERSAL', ?, ?, ?, ?)
+      `, [customerId, p.id, bill.id, p.amount, balance]);
     }
 
-    /* =========================
-       6️⃣ UPDATE CUSTOMER BALANCE
-    ========================== */
+    /* 6️⃣ Update customer balance */
     await conn.query(
       "UPDATE customers SET balance = ? WHERE id = ?",
       [balance, customerId]
     );
 
-    /* =========================
-       7️⃣ DELETE PAYMENTS
-    ========================== */
-    await conn.query(
-      "DELETE FROM payments WHERE bill_id = ?",
-      [id]
-    );
-
-    /* =========================
-       8️⃣ RESTORE STOCK
-    ========================== */
+    /* 7️⃣ Restore stock */
     const [items] = await conn.query(
       "SELECT product_name, hsn, quantity FROM bill_items WHERE bill_id = ?",
       [id]
@@ -1149,9 +1158,7 @@ app.post("/bills/:id/cancel", WrapAsync(async (req, res) => {
       );
     }
 
-    /* =========================
-       9️⃣ MARK BILL CANCELLED
-    ========================== */
+    /* 8️⃣ Mark bill cancelled */
     await conn.query(
       "UPDATE bills SET status = 'CANCELLED' WHERE id = ?",
       [id]
@@ -1163,7 +1170,7 @@ app.post("/bills/:id/cancel", WrapAsync(async (req, res) => {
   } catch (err) {
     await conn.rollback();
     console.error(err);
-    res.redirect("/bills");
+    res.redirect("/billing");
   } finally {
     conn.release();
   }
@@ -1260,7 +1267,6 @@ app.post("/bills/:bid/payments/:id/delete", WrapAsync(async (req, res) => {
 
 //customers get
 app.get("/customers", WrapAsync(async (req, res) => {
-
   const [customers] = await connection.query(`
     SELECT 
       c.id,
@@ -1274,7 +1280,9 @@ app.get("/customers", WrapAsync(async (req, res) => {
     ORDER BY last_activity DESC
   `);
 
-  res.render("customers/index", { customers });
+  res.render("customers/index", { 
+    customers
+  });
 }));
 
 app.get("/customers/search", WrapAsync(async (req, res) => {
@@ -1298,6 +1306,7 @@ app.get("/customers/search", WrapAsync(async (req, res) => {
 
 app.get("/customers/:id", WrapAsync(async (req, res) => {
   const { id } = req.params;
+  const { from, to } = req.query;
 
   const [[customer]] = await connection.query(
     "SELECT * FROM customers WHERE id = ?",
@@ -1336,8 +1345,7 @@ invoices.forEach(inv => {
     return res.redirect("/customers");
   }
 
-const [ledger] = await connection.query(
-  `
+let ledgerQuery = `
   SELECT 
     cl.*,
     COALESCE(b1.invoice_no, b2.invoice_no, b4.invoice_no, b3.invoice_no) AS invoice_no
@@ -1367,17 +1375,25 @@ const [ledger] = await connection.query(
     AND cl.bill_id = b3.id
 
   WHERE cl.customer_id = ?
-  ORDER BY cl.created_at ASC
-  `,
-  [id]
-);
+`;
 
+const ledgerParams = [id];
 
+// Add date filter if provided
+if (from && to) {
+  ledgerQuery += ` AND DATE(cl.created_at) BETWEEN ? AND ?`;
+  ledgerParams.push(from, to);
+}
+
+ledgerQuery += ` ORDER BY cl.created_at ASC`;
+
+const [ledger] = await connection.query(ledgerQuery, ledgerParams);
 
   res.render("customers/show", {
     customer,
     ledger,
-    invoices
+    invoices,
+    dateFilter: { from: from || '', to: to || '' }
   });
 }));
 

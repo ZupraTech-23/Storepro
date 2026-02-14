@@ -19,7 +19,16 @@
 
   <div style="text-align: center; margin-bottom: 10px; font-size: 16px; font-weight: 600; text-transform: uppercase;">
     <span>Total Items: <%= items.length %></span>
+  </div>
 
+  <!-- Search Bar -->
+  <div class="inventory-search-box">
+    <input 
+      type="text" 
+      id="inventorySearch" 
+      placeholder="Search by item name..." 
+      class="inventory-search-input"
+    >
   </div>
 
   <table class="inventory-table">
@@ -71,3 +80,63 @@
 </div>
 
 </body>
+
+<style>
+  .inventory-search-box {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 6px;
+  }
+
+  .inventory-search-input {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  .inventory-search-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.getElementById('inventorySearch');
+    const tableRows = document.querySelectorAll('.inventory-table tbody tr');
+    const allItems = Array.from(tableRows).filter(row => row.querySelector('td').textContent !== 'No inventory found');
+
+    searchInput.addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      let visibleCount = 0;
+
+      allItems.forEach(row => {
+        const itemNameCell = row.cells[0]; // Item Name is in first column
+        const itemName = itemNameCell.textContent.toLowerCase();
+        const shouldShow = itemName.includes(searchTerm);
+        
+        row.style.display = shouldShow ? '' : 'none';
+        if (shouldShow) visibleCount++;
+      });
+
+      // Show no results message
+      if (visibleCount === 0 && allItems.length > 0) {
+        let noResultsRow = document.getElementById('no-results-inventory-row');
+        if (!noResultsRow) {
+          noResultsRow = document.createElement('tr');
+          noResultsRow.innerHTML = '<td colspan="8" class="empty" style="text-align: center; padding: 20px;">No items match your search</td>';
+          noResultsRow.id = 'no-results-inventory-row';
+          document.querySelector('.inventory-table tbody').appendChild(noResultsRow);
+        }
+      } else {
+        const noResultsRow = document.getElementById('no-results-inventory-row');
+        if (noResultsRow) noResultsRow.remove();
+      }
+    });
+  });
+</script>

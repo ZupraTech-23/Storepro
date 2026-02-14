@@ -22,8 +22,8 @@
       <button class="print-btn">Edit</button>
     </a>
   
-    <form method="POST" action="/bills/<%= bill.id %>/cancel">
-    <button type="submit" class="print-btn">Cancel Bill</button>
+    <form method="POST" action="/bills/<%= bill.id %>/cancel" class="cancel-form">
+    <button type="submit" id="cancelBtn" class="print-btn">Cancel Bill</button>
       </form>
     <button   onclick="window.print()" class="print-btn">🖨 Print Invoice</button>
   
@@ -186,5 +186,17 @@
   </div> <!-- END bos-container -->
 
 </div> <!-- END bos-page -->
+
+<script>
+  document.querySelector('.cancel-form')?.addEventListener('submit', function(e) {
+    const submitBtn = document.getElementById('cancelBtn');
+    if (submitBtn.disabled) {
+      e.preventDefault();
+      return false;
+    }
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Cancelling...';
+  });
+</script>
 
    

@@ -15,6 +15,32 @@
     </a>
   </div>
 
+  <!-- ===== Search & Filter ===== -->
+  <div class="billing-box search-filter-box">
+    <form id="filterForm" method="GET" action="/billing" class="filter-row">
+      <input 
+        type="text" 
+        name="search" 
+        placeholder="Search by customer name..." 
+        class="search-input"
+        value="<%= typeof search !== 'undefined' ? search : '' %>"
+      >
+      
+      <input 
+        type="date" 
+        name="date" 
+        class="filter-input"
+        title="Filter by date"
+        value="<%= typeof dateFilter !== 'undefined' ? dateFilter : '' %>"
+      >
+      
+      <button type="submit" class="filter-btn">Apply Filters</button>
+      <% if ((typeof search !== 'undefined' && search) || (typeof dateFilter !== 'undefined' && dateFilter)) { %>
+        <a href="/billing" class="filter-btn" style="text-decoration: none; background: #6c757d; color: white; padding: 10px 15px; border-radius: 4px; display: inline-block;">Clear Filters</a>
+      <% } %>
+    </form>
+  </div>
+
   <!-- ===== Table ===== -->
   <div class="billing-box">
     <table class="billing-table">
@@ -72,3 +98,97 @@
   </div>
 
 </div>
+
+<style>
+  .search-filter-box {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 6px;
+  }
+
+  .filter-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .search-input,
+  .filter-input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    flex: 1;
+    min-width: 150px;
+  }
+
+  .search-input:focus,
+  .filter-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  }
+
+  .filter-btn {
+    padding: 10px 15px;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .filter-btn:hover {
+    background: #5a6268;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.querySelector('input[name="search"]');
+    const dateInput = document.querySelector('input[name="date"]');
+    const filterForm = document.getElementById('filterForm');
+    const tableRows = document.querySelectorAll('.billing-table tbody tr');
+    const allBills = Array.from(tableRows).filter(row => row.querySelector('td').textContent !== 'No invoices found');
+
+    // If date is provided, that means DB filtering was already done
+    // Only apply JS filtering if date is NOT provided
+    if (!dateInput.value) {
+      // JS-side search only
+      searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        let visibleCount = 0;
+
+        allBills.forEach(row => {
+          const customerCell = row.cells[1];
+          const customerName = customerCell.textContent.toLowerCase();
+          const shouldShow = customerName.includes(searchTerm);
+          
+          row.style.display = shouldShow ? '' : 'none';
+          if (shouldShow) visibleCount++;
+        });
+
+        // Show no results message
+        if (visibleCount === 0 && allBills.length > 0) {
+          let noResultsRow = document.getElementById('no-results-row');
+          if (!noResultsRow) {
+            noResultsRow = document.createElement('tr');
+            noResultsRow.innerHTML = '<td colspan="6" class="empty" style="text-align: center; padding: 20px;">No invoices match your search</td>';
+            noResultsRow.id = 'no-results-row';
+            document.querySelector('.billing-table tbody').appendChild(noResultsRow);
+          }
+        } else {
+          const noResultsRow = document.getElementById('no-results-row');
+          if (noResultsRow) noResultsRow.remove();
+        }
+      });
+    }
+
+    // When date is selected, submit the form to DB
+    dateInput.addEventListener('change', function() {
+      filterForm.submit();
+    });
+  });
+</script>

@@ -11,7 +11,7 @@
   <!-- FORM BOX -->
   <div class="inventory-box">
 
-    <form action="/edit-inventory/<%= item.id %>?_method=PATCH" method="POST" class="inventory-form needs-validation" novalidate>
+    <form action="/edit-inventory/<%= item.id %>?_method=PATCH" method="POST" class="inventory-form needs-validation" novalidate autocomplete="off">
 
       <!-- BASIC INFO -->
       <div class="form-section">
@@ -19,19 +19,22 @@
 
         <div class="form-row">
           <label>Item Name</label>
-          <input type="text" name="name" placeholder="e.g. Samsung Galaxy S23" class="form-control" value="<%= item.name%>" />
+          <input type="text" name="name" data-type="item" placeholder="e.g. Samsung Galaxy S23" class="form-control auto-input" value="<%= item.name%>" autocomplete="off" />
+          <ul class="list-group suggestion-box d-none"></ul>
           <div class="invalid-feedback">Item name is required</div>
         </div>
 
         <div class="form-row">
           <label>Category</label>
-          <input type="text" name="category" placeholder="e.g. Smartphones" class="form-control"  value="<%= item.category %>" />
+          <input type="text" name="category" data-type="category" placeholder="e.g. Smartphones" class="form-control auto-input"  value="<%= item.category %>" autocomplete="off" />
+          <ul class="list-group suggestion-box d-none"></ul>
           <div class="invalid-feedback">Category is required</div>
         </div>
 
         <div class="form-row">
           <label>Brand</label>
-          <input type="text" name="brand" placeholder="e.g. Samsung" class="form-control" value="<%= item.brand %>" required />
+          <input type="text" name="brand" data-type="brand" placeholder="e.g. Samsung" class="form-control auto-input" value="<%= item.brand %>" required autocomplete="off" />
+          <ul class="list-group suggestion-box d-none"></ul>
           <div class="invalid-feedback">Brand name is required</div>
         </div>
       </div>
@@ -43,13 +46,13 @@
         <div class="price-row">
           <div>
             <label>Purchase Price</label>
-            <input type="number" name="purchase_price" min="0" placeholder="₹ 0.00" class="form-control" value="<%= item.purchase_price %>" required />
+            <input type="number" name="purchase_price" min="0" placeholder="₹ 0.00" class="form-control no-arrow" value="<%= item.purchase_price %>" required />
             <div class="invalid-feedback">Purchase Price is required</div>
           </div>
 
           <div>
             <label>Selling Price</label>
-            <input type="number" name="selling_price" min="0" placeholder="₹ 0.00" class="form-control" value="<%= item.selling_price %>" required />
+            <input type="number" name="selling_price" min="0" placeholder="₹ 0.00" class="form-control no-arrow" value="<%= item.selling_price %>" required />
             <div class="invalid-feedback">Selling Price is required</div>
           </div>
           <div>
@@ -66,7 +69,7 @@
 
         <div class="form-row small-row">
           <label>Opening Stock</label>
-          <input type="number" name="stock" min="0" class="form-control" value="<%= item.stock%>" required />
+          <input type="number" name="stock" min="0" class="form-control no-arrow" value="<%= item.stock%>" required />
           <div class="invalid-feedback">Stock is required</div>
         </div>
 
@@ -78,7 +81,7 @@
 
       <!-- ACTIONS -->
       <div class="form-actions">
-        <button type="submit" class="btn primary">Edit</button>
+        <button type="submit" id="inventorySubmitBtn" class="btn primary">Edit</button>
         <a href="/inventory" class="btn secondary">Cancel</a>
       </div>
 
@@ -87,4 +90,17 @@
   </div>
 </div>
 
+<script>
+  document.querySelector('.inventory-form').addEventListener('submit', function(e) {
+    const submitBtn = document.getElementById('inventorySubmitBtn');
+    if (submitBtn.disabled) {
+      e.preventDefault();
+      return false;
+    }
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Updating...';
+  });
+</script>
+
 <script src="/js/script.js"></script>
+<script src="/js/suggestion.js"></script>

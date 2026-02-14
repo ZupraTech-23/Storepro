@@ -14,6 +14,16 @@
       <span>Total Customers: <%= customers.length %></span>
     </div>
 
+    <!-- Search Bar -->
+    <div class="customers-search-box">
+      <input 
+        type="text" 
+        id="customerSearch" 
+        placeholder="Search by customer name..." 
+        class="customers-search-input"
+      >
+    </div>
+
     <!-- Table -->
     <table class="customers-table">
       <thead>
@@ -46,4 +56,64 @@
     </table>
 
   </div>
+
+<style>
+  .customers-search-box {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 6px;
+  }
+
+  .customers-search-input {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  .customers-search-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.getElementById('customerSearch');
+    const tableRows = document.querySelectorAll('.customers-table tbody tr');
+    const allCustomers = Array.from(tableRows).filter(row => row.querySelector('td').textContent !== 'No customers found');
+
+    searchInput.addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      let visibleCount = 0;
+
+      allCustomers.forEach(row => {
+        const nameCell = row.cells[0]; // Customer Name is in first column
+        const customerName = nameCell.textContent.toLowerCase();
+        const shouldShow = customerName.includes(searchTerm);
+        
+        row.style.display = shouldShow ? '' : 'none';
+        if (shouldShow) visibleCount++;
+      });
+
+      // Show no results message
+      if (visibleCount === 0 && allCustomers.length > 0) {
+        let noResultsRow = document.getElementById('no-results-customers-row');
+        if (!noResultsRow) {
+          noResultsRow = document.createElement('tr');
+          noResultsRow.innerHTML = '<td colspan="5" class="empty" style="text-align: center; padding: 20px;">No customers match your search</td>';
+          noResultsRow.id = 'no-results-customers-row';
+          document.querySelector('.customers-table tbody').appendChild(noResultsRow);
+        }
+      } else {
+        const noResultsRow = document.getElementById('no-results-customers-row');
+        if (noResultsRow) noResultsRow.remove();
+      }
+    });
+  });
+</script>
 

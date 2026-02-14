@@ -21,8 +21,8 @@
       <button>Edit</button>
     </a>
   
-  <form method="POST" action="/bills/<%= bill.id %>/cancel">
-    <button type="submit">Cancel Bill</button>
+  <form method="POST" action="/bills/<%= bill.id %>/cancel" class="cancel-form">
+    <button type="submit" id="cancelBtn">Cancel Bill</button>
   </form>
   <button onclick="window.print()">🖨 Print Invoice</button>
 
@@ -217,3 +217,15 @@
 
 
     </body>
+
+<script>
+  document.querySelector('.cancel-form')?.addEventListener('submit', function(e) {
+    const submitBtn = document.getElementById('cancelBtn');
+    if (submitBtn.disabled) {
+      e.preventDefault();
+      return false;
+    }
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Cancelling...';
+  });
+</script>
